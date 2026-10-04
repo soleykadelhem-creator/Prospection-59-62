@@ -1,0 +1,654 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#111827">
+  <title>Prospection 59-62</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f5f6f8;color:#111827}
+    .hidden{display:none!important}.screen{min-height:100vh}.login{display:flex;align-items:center;justify-content:center;padding:24px}
+    .card{background:white;border-radius:22px;padding:24px;box-shadow:0 8px 30px #00000012;max-width:520px;width:100%}
+    h1{margin:0 0 8px;font-size:28px}.muted{color:#6b7280}.field{margin:14px 0}.field label{display:block;font-weight:700;margin-bottom:6px}
+    input,select,button{width:100%;padding:13px;border-radius:12px;border:1px solid #d1d5db;font-size:16px;background:#fff}
+    button{background:#111827;color:white;border:0;font-weight:700;cursor:pointer}.secondary{background:#e5e7eb;color:#111827}
+    .danger{background:#dc2626}.top{position:sticky;top:0;background:white;z-index:1000;padding:12px 16px;border-bottom:1px solid #e5e7eb}
+    .toprow{display:flex;justify-content:space-between;align-items:center;gap:10px}.top button{width:auto;padding:9px 12px}
+    .content{padding:14px;max-width:1000px;margin:auto}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+    .stat{background:white;border-radius:16px;padding:16px}.stat b{font-size:28px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+    #map{height:58vh;min-height:400px;border-radius:18px;overflow:hidden}.list{margin-top:14px}
+    .row{background:white;padding:13px;border-radius:14px;margin:8px 0;display:flex;justify-content:space-between;gap:10px}
+    .dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:7px}
+    .small{font-size:13px}.error{color:#b91c1c;background:#fee2e2;padding:10px;border-radius:10px;margin:10px 0}
+    @media(max-width:600px){.actions{grid-template-columns:1fr}.content{padding:10px}}
+  
+.homeScreen{background:#fff;text-align:center;border-radius:22px;padding:18px 14px 16px;margin:0 0 14px;box-shadow:0 5px 18px rgba(15,23,42,.06)}
+.homeTitle{font-size:29px;line-height:.98;font-weight:950;letter-spacing:-.8px;color:#14264d}
+.homeTitle span{font-size:27px}.homeSubtitle{font-size:14px;color:#465267;font-weight:600;margin-top:7px}
+.deptMap{height:105px;position:relative;max-width:225px;margin:8px auto 10px}
+.dept{position:absolute;color:#fff;font-size:21px;font-weight:900;display:flex;align-items:center;justify-content:center;filter:drop-shadow(0 3px 3px rgba(0,0,0,.1))}
+.dept62{left:38px;top:3px;width:96px;height:88px;background:#1689e8;clip-path:polygon(27% 0,72% 7%,96% 34%,83% 76%,56% 100%,19% 83%,0 48%,8% 15%)}
+.dept59{right:36px;top:16px;width:84px;height:82px;background:#16a05a;clip-path:polygon(27% 0,70% 7%,100% 35%,84% 75%,55% 98%,18% 87%,0 48%,8% 17%)}
+.homeMenu{display:flex;flex-direction:column;gap:10px;max-width:360px;margin:0 auto}
+.homeAction{border:0!important;border-radius:17px!important;min-height:67px;display:flex;align-items:center;text-align:left;padding:9px 15px;color:#fff!important;box-shadow:0 4px 11px rgba(15,23,42,.12);width:100%;font-size:25px}
+.homeAction.blue{background:#1677e8}.homeAction.green{background:#10a85b}.homeAction.orange{background:#f38a0a}.homeAction.purple{background:#6937dc}
+.homeAction span{display:inline-block;text-align:left;margin-left:8px}.homeAction b{display:block;font-size:16px;line-height:1.08}.homeAction small{display:block;font-size:11px;opacity:.9;margin-top:3px}
+@media(min-width:800px){.homeScreen{max-width:380px;margin-left:auto;margin-right:auto}}
+
+
+/* V17 — navigation par vraies pages, sans toucher à Firebase/Auth */
+.appPage{display:none}
+.appPage.active{display:block}
+.pageHead{display:flex;align-items:center;gap:10px;margin:2px 0 12px}
+.pageHead h2{margin:0;font-size:22px}
+.backHome{width:auto!important;padding:9px 12px!important;background:#eef2f7!important;color:#172033!important}
+.bottomNav{
+  position:fixed;left:0;right:0;bottom:0;z-index:5000;
+  display:none;grid-template-columns:repeat(5,1fr);gap:2px;
+  padding:7px 6px calc(7px + env(safe-area-inset-bottom));
+  background:rgba(255,255,255,.97);backdrop-filter:blur(14px);
+  border-top:1px solid #e5e7eb;box-shadow:0 -5px 20px rgba(15,23,42,.08)
+}
+.bottomNav button{
+  width:100%;border:0;background:transparent;color:#64748b;
+  padding:7px 2px 5px;border-radius:12px;font-size:11px;font-weight:800
+}
+.bottomNav button .navIcon{display:block;font-size:20px;line-height:21px;margin-bottom:2px}
+.bottomNav button.active{background:#eef4ff;color:#1769e8}
+#app{padding-bottom:84px}
+.homeAction{cursor:pointer}
+.menuCard{background:white;border-radius:18px;padding:16px;box-shadow:0 5px 18px rgba(15,23,42,.06);margin-bottom:12px}
+.menuCard button{margin-top:8px}
+@media(max-width:600px){
+  .pageHead{margin-top:4px}
+  .pageHead h2{font-size:20px}
+  #map{height:calc(100vh - 235px);min-height:420px}
+}
+
+
+/* V18 — ergonomie terrain */
+.mapToolbar{
+  display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px;
+  scrollbar-width:none
+}
+.mapToolbar::-webkit-scrollbar{display:none}
+.mapChip{
+  flex:0 0 auto;border:1px solid #e5e7eb;background:#fff;color:#334155;
+  border-radius:999px;padding:9px 13px;font-weight:800;font-size:12px
+}
+.mapChip.active{background:#172033;color:#fff;border-color:#172033}
+.mapSummary{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px
+}
+.mapStat{
+  background:#fff;border:1px solid #edf0f4;border-radius:15px;padding:10px 8px;
+  text-align:center;box-shadow:0 4px 12px rgba(15,23,42,.04)
+}
+.mapStat strong{display:block;font-size:19px;line-height:21px}
+.mapStat span{font-size:10px;color:#64748b;font-weight:800}
+.mapHint{
+  background:#f8fafc;border-radius:14px;padding:10px 12px;margin-bottom:10px;
+  color:#475569;font-size:12px;font-weight:700
+}
+.contractBadge{
+  background:#ecfdf5;color:#047857;border:1px solid #a7f3d0;
+  border-radius:999px;padding:5px 9px;font-size:11px;font-weight:900
+}
+
+</style>
+</head>
+<body>
+<div id="login" class="screen login">
+  <div class="card">
+    <h1>📍 Prospection 59-62</h1>
+    <p class="muted">Carte collaborative de prospection ENGIE Pro</p>
+    <div id="loginError" class="error hidden"></div>
+    <div class="field"><label>E-mail</label><input id="email" type="email" autocomplete="username" placeholder="Votre e-mail"></div>
+    <div class="field"><label>Mot de passe</label><input id="password" type="password" autocomplete="current-password" placeholder="Votre mot de passe"></div>
+    <button id="loginBtn">Se connecter</button>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+  <div class="top">
+    <div class="toprow">
+      <div><b>📍 Prospection 59-62</b><div class="small muted" id="who"></div></div>
+      <button id="logout" class="secondary">Déconnexion</button>
+    </div>
+  </div>
+  <main class="content" id="mainContent">
+    <section class="homeScreen">
+      <div class="homeTitle">PROSPECTION<br><span>59 &amp; 62</span></div>
+      <div class="homeSubtitle">Carte et suivi en temps réel</div>
+      <div class="deptMap">
+        <div class="dept dept62">62</div>
+        <div class="dept dept59">59</div>
+      </div>
+      <div class="homeMenu">
+        <button class="homeAction blue" type="button" data-go-page="map">🗺️ <span><b>Voir la carte</b><small>Rues et commerces</small></span></button>
+        <button class="homeAction green" type="button" data-go-page="add" data-add="street">🛣️ <span><b>J’ai prospecté<br>une rue</b><small>Ajouter un passage</small></span></button>
+        <button class="homeAction orange" type="button" data-go-page="add" data-add="contract">🤝 <span><b>J’ai signé un contrat</b><small>Ajouter un commerce</small></span></button>
+        <button class="homeAction purple" type="button" data-go-page="results">📊 <span><b>Mes résultats</b><small>Mon suivi personnel</small></span></button>
+      </div>
+    </section>
+    <div class="grid">
+      <div class="stat"><div class="muted">Rues prospectées</div><b id="streetCount">0</b></div>
+      <div class="stat"><div class="muted">Contrats signés</div><b id="contractCount">0</b></div>
+      <div class="stat"><div class="muted">Équipe</div><b>7</b></div>
+    </div>
+
+    <div class="card" style="margin:14px 0">
+      <h2 style="margin-top:0;margin-bottom:10px">📊 Aujourd’hui</h2>
+      <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:8px">
+        <div class="stat" style="padding:10px;text-align:center"><div class="muted small">Commerces</div><b id="visitedCount" style="font-size:22px">0</b></div>
+        <div class="stat" style="padding:10px;text-align:center"><div class="muted small">Rues</div><b id="filteredStreetCount" style="font-size:22px">0</b></div>
+        <div class="stat" style="padding:10px;text-align:center"><div class="muted small">Contrats</div><b id="filteredContractCount" style="font-size:22px">0</b></div>
+      </div>
+      <div class="grid" style="margin-top:12px">
+        <div class="field" style="margin:0"><label>Commercial</label><select id="filterCommercial"><option value="">Toute l'équipe</option></select></div>
+        <div class="field" style="margin:0"><label>Département</label><select id="filterDept"><option value="">59 + 62</option><option value="59">59 — Nord</option><option value="62">62 — Pas-de-Calais</option></select></div>
+        <div class="field" style="margin:0"><label>Date</label><input id="filterDate" type="date"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px">
+        <button id="myDay" class="secondary">👤 Ma journée</button>
+        <button id="resetFilters" class="secondary">Réinitialiser</button>
+      </div>
+    </div>
+    <div class="actions">
+      <button id="streetBtn">➕ J’ai prospecté une rue</button>
+      <button id="contractBtn">🤝 J’ai signé un contrat</button>
+    </div>
+
+    <div class="card" id="streetForm" class="hidden">
+      <h2>Rue prospectée</h2>
+      <div class="field"><label>Commercial</label><select id="streetCommercial"></select></div>
+      <div class="field"><label>Département</label><select id="streetDept"><option value="59">59 — Nord</option><option value="62">62 — Pas-de-Calais</option></select></div>
+      <div class="field"><label>Rue / adresse</label><input id="streetAddress" placeholder="Ex. Rue Nationale, Lille"></div>
+      <div class="field"><label>Nombre de commerces visités</label><input id="visited" type="number" min="0" value="0"></div>
+      <button id="saveStreet">Enregistrer la rue</button>
+    </div>
+
+    <div class="card hidden" id="contractForm" style="margin-top:12px">
+      <h2>Contrat signé</h2>
+      <div class="field"><label>Commercial</label><select id="contractCommercial"></select></div>
+      <div class="field"><label>Commerce / client</label><input id="client" placeholder="Nom du commerce"></div>
+      <div class="field"><label>Département</label><select id="contractDept"><option value="59">59 — Nord</option><option value="62">62 — Pas-de-Calais</option></select></div>
+      <div class="field"><label>Adresse</label><input id="contractAddress" placeholder="Adresse du commerce"></div>
+      <div class="field"><label>Énergie</label><select id="energy"><option>Électricité</option><option>Gaz</option><option>Électricité + Gaz</option></select></div>
+      <button id="saveContract">Enregistrer le contrat</button>
+    </div>
+
+    <div class="card" style="margin:14px 0">
+      <b>Légende de l’équipe</b>
+      <div id="legend" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px"></div>
+      <div class="small muted" style="margin-top:8px">🟡 marqueur = contrat signé</div>
+    </div>
+    <div style="margin:14px 0"><div style="display:flex;gap:8px;margin:8px 0 0">
+  <button id="centerLille" class="secondary" style="flex:1">📍 Centrer Lille</button>
+  <button id="lastStreet" class="secondary" style="flex:1">🛣️ Dernière rue</button>
+</div>
+<div id="map"></div></div>
+    <div class="card">
+      <h2>Derniers passages</h2>
+      <div id="list" class="list"><span class="muted">Aucune donnée pour le moment.</span></div>
+    </div>
+  </main>
+
+  <nav id="bottomNav" class="bottomNav" aria-label="Navigation principale">
+    <button type="button" data-page="home"><span class="navIcon">🏠</span>Accueil</button>
+    <button type="button" data-page="map"><span class="navIcon">🗺️</span>Carte</button>
+    <button type="button" data-page="add"><span class="navIcon">➕</span>Ajouter</button>
+    <button type="button" data-page="results"><span class="navIcon">📊</span>Résultats</button>
+    <button type="button" data-page="menu"><span class="navIcon">☰</span>Menu</button>
+  </nav>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDXj5cQLj0LXpgewFN4VlAT8iOOf909whI",
+  authDomain: "prospection-ranger-59-62-02.firebaseapp.com",
+  projectId: "prospection-ranger-59-62-02",
+  storageBucket: "prospection-ranger-59-62-02.firebasestorage.app",
+  messagingSenderId: "1063214347882",
+  appId: "1:1063214347882:web:b43ccf8ec684b6f057fc13"
+};
+
+const appFb = initializeApp(firebaseConfig);
+const auth = getAuth(appFb);
+const db = getFirestore(appFb);
+
+const team = ["Lucas Chenoufi","Thomas Delgado","Paul Struyve","Paul 1","Raphaël Vienne","Jordan Bruni","Soleyka Delhem"];
+const colors = ["#2563eb","#16a34a","#f59e0b","#9333ea","#dc2626","#0891b2","#db2777"];
+
+
+const $ = id => document.getElementById(id);
+
+/* V17 navigation: we reorganize the existing V15 DOM only after it exists.
+   Firebase/Auth code and all data-writing logic remain unchanged. */
+
+/* V19 — vraie lecture terrain de la carte */
+let __mapFilter = "all";
+
+function setMapChip(name){
+  __mapFilter = name;
+  document.querySelectorAll("[data-map-filter]").forEach(btn=>{
+    btn.classList.toggle("active", btn.dataset.mapFilter===name);
+  });
+  drawFilteredMap();
+}
+
+function updateMapSummary(streets, contracts){
+  const streetEl = document.getElementById("mapStreetCount");
+  const visitEl = document.getElementById("mapVisitCount");
+  const contractEl = document.getElementById("mapContractCount");
+  if(!streetEl) return;
+  streetEl.textContent = streets.length;
+  visitEl.textContent = streets.reduce((n,s)=>n + Number(s.visited || 0),0);
+  contractEl.textContent = contracts.length;
+}
+
+function getMapFilteredData(){
+  let streets = allStreets.filter(matches);
+  let contracts = allContracts.filter(matches);
+  const uid = auth.currentUser?.uid || "";
+
+  if(__mapFilter==="mine"){
+    streets = streets.filter(s=>s.createdBy===uid);
+    contracts = contracts.filter(s=>s.createdBy===uid);
+  }else if(__mapFilter==="contracts"){
+    streets = [];
+  }
+  return {streets,contracts};
+}
+function setupNavigation(){
+  const main = $("mainContent");
+  const children = Array.from(main.children);
+  const home = children[0];
+  const stats = children[1];
+  const today = children[2];
+  const actions = children[3];
+  const streetForm = children[4];
+  const contractForm = children[5];
+  const legend = children[6];
+  const mapWrap = children[7];
+  const listCard = children[8];
+
+  const pages = {};
+  const makePage = (id) => {
+    const el = document.createElement("section");
+    el.id = id + "Page";
+    el.className = "appPage";
+    return el;
+  };
+
+  const homePage = makePage("home");
+  const mapPage = makePage("map");
+  const addPage = makePage("add");
+  const resultsPage = makePage("results");
+  const menuPage = makePage("menu");
+
+  homePage.appendChild(home);
+
+  mapPage.innerHTML = `
+    <div class="pageHead">
+      <h2>🗺️ Carte de prospection</h2>
+    </div>`;
+  mapPage.appendChild(legend);
+  const mapTools = document.createElement("div");
+  mapTools.innerHTML = `
+    <div class="mapSummary">
+      <div class="mapStat"><strong id="mapStreetCount">0</strong><span>RUES</span></div>
+      <div class="mapStat"><strong id="mapVisitCount">0</strong><span>PASSAGES</span></div>
+      <div class="mapStat"><strong id="mapContractCount">0</strong><span>CONTRATS</span></div>
+    </div>
+    <div class="mapToolbar">
+      <button class="mapChip active" type="button" data-map-filter="all">Toutes</button>
+      <button class="mapChip" type="button" data-map-filter="mine">Mes rues</button>
+      <button class="mapChip" type="button" data-map-filter="contracts">Contrats</button>
+    </div>
+    <div class="mapHint">💡 Touchez une rue pour voir le commercial, la date et le nombre de commerces visités. Les contrats sont affichés en jaune.</div>`;
+  mapPage.appendChild(mapTools);
+  mapPage.appendChild(mapWrap);
+  mapTools.querySelectorAll("[data-map-filter]").forEach(btn=>{
+    btn.addEventListener("click",()=>setMapChip(btn.dataset.mapFilter));
+  });
+
+  addPage.innerHTML = `
+    <div class="pageHead">
+      <h2>➕ Ajouter</h2>
+    </div>
+    <div class="small muted" style="margin:-4px 0 12px">Enregistre une rue prospectée ou un contrat signé.</div>`;
+  addPage.appendChild(actions);
+  addPage.appendChild(streetForm);
+  addPage.appendChild(contractForm);
+
+  resultsPage.innerHTML = `
+    <div class="pageHead">
+      <h2>📊 Mes résultats</h2>
+    </div>`;
+  resultsPage.appendChild(stats);
+  resultsPage.appendChild(today);
+  resultsPage.appendChild(listCard);
+
+  menuPage.innerHTML = `
+    <div class="pageHead"><h2>☰ Menu</h2></div>
+    <div class="menuCard">
+      <b>👤 Compte connecté</b>
+      <div class="small muted" id="menuWho" style="margin-top:6px"></div>
+    </div>
+    <div class="menuCard">
+      <b>👥 Équipe</b>
+      <div class="small muted" style="margin-top:6px">7 commerciaux · données partagées en temps réel</div>
+    </div>
+    <div class="menuCard">
+      <b>📍 Zone</b>
+      <div class="small muted" style="margin-top:6px">Nord (59) + Pas-de-Calais (62)</div>
+    </div>
+    <div class="menuCard">
+      <button id="menuLogout" class="danger" type="button">Déconnexion</button>
+    </div>`;
+
+  // Clear main and insert the five pages.
+  main.innerHTML = "";
+  [homePage,mapPage,addPage,resultsPage,menuPage].forEach(p=>main.appendChild(p));
+
+  pages.home=homePage; pages.map=mapPage; pages.add=addPage; pages.results=resultsPage; pages.menu=menuPage;
+
+  const nav = $("bottomNav");
+  const navButtons = Array.from(nav.querySelectorAll("button[data-page]"));
+
+  function showPage(name){
+    Object.entries(pages).forEach(([key,el])=>el.classList.toggle("active", key===name));
+    navButtons.forEach(btn=>btn.classList.toggle("active", btn.dataset.page===name));
+    if(name==="map"){
+      setTimeout(()=>{ if(map) map.invalidateSize(); },80);
+    }
+    if(name==="menu"){
+      $("menuWho").textContent = auth.currentUser?.email || "";
+    }
+    window.scrollTo({top:0,behavior:"instant"});
+  }
+
+  navButtons.forEach(btn=>btn.addEventListener("click",()=>showPage(btn.dataset.page)));
+  document.querySelectorAll("[data-go-page]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const page=btn.dataset.goPage;
+      showPage(page);
+      if(page==="add" && btn.dataset.add){
+        if(btn.dataset.add==="street") $("streetBtn").click();
+        if(btn.dataset.add==="contract") $("contractBtn").click();
+      }
+    });
+  });
+
+  // Keep the login screen completely separate: nav is hidden until Auth says "user".
+  nav.style.display="none";
+  window.__showAppPage = showPage;
+}
+
+setupNavigation();
+team.forEach(name=>{const o=document.createElement("option");o.value=name;o.textContent=name;$("filterCommercial").appendChild(o);});
+let allStreets=[], allContracts=[];
+const legend = $("legend");
+team.forEach((name,i)=>{
+  const item=document.createElement("span");
+  item.style.cssText="display:inline-flex;align-items:center;gap:5px;padding:6px 9px;background:#f3f4f6;border-radius:999px;font-size:13px;font-weight:700";
+  item.innerHTML=`<span style="width:10px;height:10px;border-radius:50%;background:${colors[i]}"></span>${name}`;
+  legend.appendChild(item);
+});
+for (const id of ["streetCommercial","contractCommercial"]) {
+  team.forEach((name,i)=> {
+    const o=document.createElement("option"); o.value=name; o.textContent=name; $(id).appendChild(o);
+  });
+}
+
+let map, markers=[], streetLines=[];
+let mapInitialized=false;
+function initMap(){
+  if(mapInitialized) return;
+  map=L.map("map").setView([50.6292,3.0573],14);
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"© OpenStreetMap"}).addTo(map);
+  mapInitialized=true;
+}
+$("centerLille").onclick=()=>{map.setView([50.6292,3.0573],14,{animate:true});};
+let lastStreetPos=null;
+$("lastStreet").onclick=()=>{if(lastStreetPos) map.setView(lastStreetPos,16,{animate:true});};
+function addMarker(lat,lon,name,color,popup,contract=false){
+  const m=L.circleMarker([lat,lon],{
+    radius:contract?10:8,
+    color:contract?"#111827":color,
+    fillColor:contract?"#fbbf24":color,
+    fillOpacity:.95,
+    weight:contract?3:2
+  }).addTo(map).bindPopup(popup);
+  markers.push(m);
+}
+async function getStreetGeometry(lat,lon,address){
+  const raw = (address.split(",")[0]||address)
+    .replace(/^\s*\d+[A-Za-zÀ-ÿ\-\/]*\s+/,"")
+    .trim();
+  const escaped = raw.replace(/[.*+?^${}()|[\]\\]/g,"\\$&");
+  const q1 = `[out:json][timeout:25];way["highway"]["name"~"^${escaped}$",i](around:1200,${lat},${lon});out geom;`;
+  const q2 = `[out:json][timeout:25];way["highway"]["name"](around:250,${lat},${lon});out tags geom;`;
+  async function run(q){
+    try{
+      const r=await fetch("https://overpass-api.de/api/interpreter",{method:"POST",body:q});
+      if(!r.ok) return [];
+      const j=await r.json();
+      return (j.elements||[]).filter(e=>e.geometry&&e.geometry.length>1);
+    }catch(e){return []}
+  }
+  let els=await run(q1);
+  if(!els.length){
+    const nearby=await run(q2);
+    const norm=s=>(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/^rue\s+/,"").trim();
+    const target=norm(raw);
+    els=nearby.filter(e=>{
+      const n=norm(e.tags?.name);
+      return n===target || n.includes(target) || target.includes(n);
+    });
+  }
+  return els.map(e=>e.geometry.map(p=>[p.lat,p.lon]));
+}
+
+async function getNominatimStreetGeometry(address){
+  let raw=(address.split(",")[0]||address).replace(/^\s*\d+[A-Za-zÀ-ÿ\-\/]*\s+/,"").trim();
+  const city=(address.split(",")[1]||"Lille").trim();
+  const q=encodeURIComponent(raw+", "+city+", France");
+  try{
+    const r=await fetch("https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&polygon_geojson=1&countrycodes=fr&q="+q);
+    if(!r.ok) return [];
+    const data=await r.json();
+    const candidates=data.filter(x=>x.geojson && (x.geojson.type==="LineString" || x.geojson.type==="MultiLineString"));
+    if(!candidates.length) return [];
+    const g=candidates[0].geojson;
+    if(g.type==="LineString") return [g.coordinates.map(p=>[p[1],p[0]])];
+    if(g.type==="MultiLineString") return g.coordinates.map(line=>line.map(p=>[p[1],p[0]]));
+  }catch(e){}
+  return [];
+}
+
+async function geocode(address, wantStreet=false){
+  const params = new URLSearchParams({
+    format:"json",
+    limit:"1",
+    countrycodes:"fr",
+    polygon_geojson:"1",
+    addressdetails:"1",
+    q:address
+  });
+  const r=await fetch("https://nominatim.openstreetmap.org/search?"+params.toString());
+  const d=await r.json();
+  if(!d[0]) return null;
+  const x=d[0];
+  return {
+    lat:+x.lat,
+    lon:+x.lon,
+    geometry:(wantStreet && x.geojson && x.geojson.type==="LineString") ? x.geojson.coordinates : null
+  };
+}
+function getDept(item){
+  if(item.dept) return item.dept;
+  const a=(item.address||"").toLowerCase();
+  if(/\b62\b|pas-de-calais|arras|calais|lens|béthune|boulogne-sur-mer/.test(a)) return "62";
+  return "59";
+}
+function matches(item){
+  const commercial=$("filterCommercial").value, dept=$("filterDept").value, date=$("filterDate").value;
+  if(commercial && item.commercial!==commercial) return false;
+  if(dept && getDept(item)!==dept) return false;
+  if(date){
+    const parts=(item.date||"").split("/");
+    const fr=parts.length===3 ? `${parts[2]}-${parts[1].padStart(2,"0")}-${parts[0].padStart(2,"0")}` : "";
+    if(fr!==date) return false;
+  }
+  return true;
+}
+function refreshDashboard(){
+  const streets=allStreets.filter(matches), contracts=allContracts.filter(matches);
+  $("streetCount").textContent=allStreets.length;
+  $("contractCount").textContent=allContracts.length;
+  $("filteredStreetCount").textContent=streets.length;
+  $("filteredContractCount").textContent=contracts.length;
+  $("visitedCount").textContent=streets.reduce((n,s)=>n+Number(s.visited||0),0);
+  $("list").innerHTML="";
+  if(!streets.length && !contracts.length){$("list").innerHTML='<span class="muted">Aucun résultat pour ces filtres.</span>';return;}
+  streets.slice(0,30).forEach(s=>{
+    const c=team.indexOf(s.commercial); const div=document.createElement("div"); div.className="row";
+    div.innerHTML=`<div><b><span class="dot" style="background:${colors[c]||"#111827"}"></span>${s.commercial||""}</b><br><span class="small">🛣️ ${s.address||""} · ${s.visited||0} commerces · ${getDept(s)}</span></div><div class="small">${s.date||""}</div>`;
+    $("list").appendChild(div);
+  });
+  contracts.slice(0,30).forEach(s=>{
+    const c=team.indexOf(s.commercial); const div=document.createElement("div"); div.className="row";
+    div.innerHTML=`<div><b>🟡 ${s.commercial||""}</b><br><span class="small">🤝 ${s.client||"Contrat"} · ${s.address||""} · ${getDept(s)}</span></div><div class="small">${s.date||""}</div>`;
+    $("list").appendChild(div);
+  });
+}
+const streetGeometryCache = new Map();
+async function drawStreetRecord(s){
+  const i=team.indexOf(s.commercial), color=colors[i]||"#111827";
+  const popup=`<b>🛣️ ${s.address}</b><br><b>${s.commercial||""}</b><br>${s.visited||0} commerces visités · ${getDept(s)}<br><span style="color:#64748b">${s.date||""}</span>`;
+  let ways = Array.isArray(s.ways) ? s.ways : [];
+  if(!ways.length && s.geometry && s.geometry.length>1){
+    ways=[s.geometry.map(p=>[p[1],p[0]])];
+  }
+  if(!ways.length && s.address){
+    const key=s.address.toLowerCase();
+    if(streetGeometryCache.has(key)) ways=streetGeometryCache.get(key);
+    else {
+      ways=await getNominatimStreetGeometry(s.address);
+      if(!ways.length && s.lat&&s.lon) ways=await getStreetGeometry(s.lat,s.lon,s.address);
+      streetGeometryCache.set(key,ways);
+    }
+  }
+  if(ways.length){
+    ways.forEach(coords=>{
+      const line=L.polyline(coords,{color,weight:11,opacity:.88,lineCap:"round",lineJoin:"round"}).addTo(map).bindPopup(popup);
+      streetLines.push(line);
+    });
+  }else if(s.lat&&s.lon){
+    addMarker(s.lat,s.lon,s.commercial,color,popup);
+  }
+}
+async function drawFilteredMap(){
+  if(!map) return;
+  markers.forEach(m=>map.removeLayer(m)); markers=[];
+  streetLines.forEach(l=>map.removeLayer(l)); streetLines=[];
+
+  const {streets,contracts}=getMapFilteredData();
+  window.__streetsCache=streets;
+  window.__contractsCache=contracts;
+
+  await Promise.all(streets.map(drawStreetRecord));
+
+  contracts.forEach(s=>{
+    if(s.lat&&s.lon){
+      const i=team.indexOf(s.commercial), color=colors[i]||"#111827";
+      addMarker(
+        s.lat,s.lon,s.commercial,color,
+        `🤝 <b>Contrat signé</b><br>${s.commercial||""}<br>${s.client||""}<br>${s.address||""}<br><span style="color:#047857;font-weight:800">${s.energy||""}</span>`,
+        true
+      );
+    }
+  });
+
+  updateMapSummary(streets,contracts);
+  refreshDashboard();
+}
+function subscribe(){
+  initMap();
+  onSnapshot(query(collection(db,"streets"),orderBy("createdAt","desc"),limit(500)), snap=>{
+    allStreets=snap.docs.map(d=>({id:d.id,...d.data()}));
+    drawFilteredMap();
+  });
+  onSnapshot(query(collection(db,"contracts"),orderBy("createdAt","desc"),limit(500)), snap=>{
+    allContracts=snap.docs.map(d=>({id:d.id,...d.data()}));
+    drawFilteredMap();
+  });
+}
+["filterCommercial","filterDept","filterDate"].forEach(id=>$(id).addEventListener("change",drawFilteredMap));
+$("resetFilters").onclick=()=>{
+  $("filterCommercial").value=""; $("filterDept").value=""; $("filterDate").value=""; setMapChip("all");
+};
+const emailToCommercial = {
+  "soleyka.delhem@gmail.com":"Soleyka Delhem"
+};
+$("myDay").onclick=()=>{
+  const name=emailToCommercial[(auth.currentUser?.email||"").toLowerCase()];
+  if(name) $("filterCommercial").value=name;
+  const now=new Date(); const y=now.getFullYear(), m=String(now.getMonth()+1).padStart(2,"0"), d=String(now.getDate()).padStart(2,"0");
+  $("filterDate").value=`${y}-${m}-${d}`;
+  setMapChip(name ? "all" : "mine");
+};
+
+$("loginBtn").onclick=async()=>{
+  $("loginError").classList.add("hidden");
+  try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value);}
+  catch(e){$("loginError").textContent="Connexion impossible : vérifie ton e-mail et ton mot de passe."; $("loginError").classList.remove("hidden");}
+};
+$("logout").onclick=()=>signOut(auth);
+$("menuLogout").onclick=()=>signOut(auth);
+$("streetBtn").onclick=()=>{$("streetForm").classList.toggle("hidden");$("contractForm").classList.add("hidden"); if(window.__showAppPage) window.__showAppPage("add")};
+$("contractBtn").onclick=()=>{$("contractForm").classList.toggle("hidden");$("streetForm").classList.add("hidden"); if(window.__showAppPage) window.__showAppPage("add")};
+
+$("saveStreet").onclick=async()=>{
+  const address=$("streetAddress").value.trim(); if(!address) return alert("Indique l’adresse ou la rue.");
+  const pos=await geocode(address,true); if(!pos) return alert("Rue introuvable. Essaie avec le nom de la rue + la ville.");
+  let ways=await getNominatimStreetGeometry(address);
+  if(!ways.length) ways=await getStreetGeometry(pos.lat,pos.lon,address);
+  if(!ways.length && !pos.geometry) return alert("La rue a été trouvée, mais son tracé n’a pas été récupéré. Essaie avec « Rue Nationale, Lille ».");
+  await addDoc(collection(db,"streets"),{commercial:$("streetCommercial").value,dept:$("streetDept").value,address,visited:Number($("visited").value||0),lat:pos.lat,lon:pos.lon,geometry:pos.geometry||null,ways,date:new Date().toLocaleDateString("fr-FR"),createdAt:Date.now(),createdBy:auth.currentUser.uid});
+  lastStreetPos=[pos.lat,pos.lon];
+  map.setView([pos.lat,pos.lon],16,{animate:true});
+  setTimeout(()=>map.invalidateSize(),250);
+  $("streetAddress").value=""; $("visited").value=0; $("streetForm").classList.add("hidden");
+};
+$("saveContract").onclick=async()=>{
+  const address=$("contractAddress").value.trim(); if(!address) return alert("Indique l’adresse du commerce.");
+  const pos=await geocode(address); if(!pos) return alert("Adresse introuvable. Essaie avec ville + rue.");
+  await addDoc(collection(db,"contracts"),{commercial:$("contractCommercial").value,dept:$("contractDept").value,client:$("client").value.trim(),address,energy:$("energy").value,lat:pos.lat,lon:pos.lon,date:new Date().toLocaleDateString("fr-FR"),createdAt:Date.now(),createdBy:auth.currentUser.uid});
+  $("client").value=""; $("contractAddress").value=""; $("contractForm").classList.add("hidden");
+};
+
+onAuthStateChanged(auth,user=>{
+  const nav = $("bottomNav");
+  if(user){
+    $("login").classList.add("hidden"); $("app").classList.remove("hidden"); $("who").textContent=user.email;
+    nav.style.display="grid";
+    if(window.__showAppPage) window.__showAppPage("home");
+    subscribe(); setTimeout(()=>{map && map.invalidateSize(); refreshMapFilter();},300);
+  }else{
+    $("login").classList.remove("hidden");$("app").classList.add("hidden");
+    nav.style.display="none";
+  }
+});
+</script>
+</body>
+</html>
