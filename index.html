@@ -105,21 +105,20 @@
     <h1>📍 Prospection 59-62</h1>
     <p class="muted">Carte collaborative de prospection ENGIE Pro</p>
     <div id="loginError" class="error hidden"></div>
-    <div id="loginPanel">
-      <div class="field"><label>E-mail</label><input id="email" type="email" autocomplete="username" placeholder="Votre e-mail"></div>
-      <div class="field"><label>Mot de passe</label><input id="password" type="password" autocomplete="current-password" placeholder="Votre mot de passe"></div>
-      <button id="loginBtn">Se connecter</button>
-      <button id="showSignupBtn" class="secondary" style="margin-top:10px">Créer mon compte</button>
-    </div>
-    <div id="signupPanel" class="hidden">
-      <h2 style="margin:14px 0 8px">Créer mon compte</h2>
-      <p class="muted small">Choisis ton nom dans l’équipe, puis crée ton accès personnel.</p>
-      <div class="field"><label>Commercial</label><select id="signupCommercial"></select></div>
-      <div class="field"><label>E-mail</label><input id="signupEmail" type="email" autocomplete="email" placeholder="Votre e-mail"></div>
-      <div class="field"><label>Mot de passe</label><input id="signupPassword" type="password" autocomplete="new-password" placeholder="6 caractères minimum"></div>
-      <div class="field"><label>Confirmer le mot de passe</label><input id="signupPassword2" type="password" autocomplete="new-password" placeholder="Retape ton mot de passe"></div>
+    <div class="field"><label>E-mail</label><input id="email" type="email" autocomplete="username" placeholder="Votre e-mail"></div>
+    <div class="field"><label>Mot de passe</label><input id="password" type="password" autocomplete="current-password" placeholder="Votre mot de passe"></div>
+    <button id="loginBtn">Se connecter</button>
+    <button id="showSignup" class="secondary" style="margin-top:10px">Créer mon compte</button>
+    <div id="signupBox" class="hidden" style="margin-top:14px;border-top:1px solid #e5e7eb;padding-top:14px">
+      <h2 style="margin:0 0 6px">Créer mon compte</h2>
+      <p class="small muted">Choisis simplement ton nom, ton e-mail et ton mot de passe. Aucun nom d’équipe n’est pré-enregistré.</p>
+      <div class="field"><label>Nom et prénom</label><input id="signupName" type="text" placeholder="Ex. Julie Martin" autocomplete="name"></div>
+      <div class="field"><label>E-mail</label><input id="signupEmail" type="email" placeholder="Votre e-mail" autocomplete="email"></div>
+      <div class="field"><label>Mot de passe</label><input id="signupPassword" type="password" placeholder="6 caractères minimum" autocomplete="new-password"></div>
+      <div class="field"><label>Confirmer le mot de passe</label><input id="signupPassword2" type="password" placeholder="Confirmer le mot de passe" autocomplete="new-password"></div>
+      <div id="signupError" class="error hidden"></div>
       <button id="signupBtn">Créer mon compte</button>
-      <button id="backLoginBtn" class="secondary" style="margin-top:10px">Retour à la connexion</button>
+      <button id="backLogin" class="secondary" style="margin-top:8px">Retour à la connexion</button>
     </div>
   </div>
 </div>
@@ -176,7 +175,7 @@
 
     <div class="card" id="streetForm" class="hidden">
       <h2>Rue prospectée</h2>
-      <div class="field"><label>Commercial</label><select id="streetCommercial"></select></div>
+      <div class="field"><label>Commercial</label><input id="streetCommercial" readonly></div>
       <div class="field"><label>Département</label><select id="streetDept"><option value="59">59 — Nord</option><option value="62">62 — Pas-de-Calais</option></select></div>
       <div class="field"><label>Rue / adresse</label><input id="streetAddress" placeholder="Ex. Rue Nationale, Lille"></div>
       <div class="field"><label>Nombre de commerces visités</label><input id="visited" type="number" min="0" value="0"></div>
@@ -185,7 +184,7 @@
 
     <div class="card hidden" id="contractForm" style="margin-top:12px">
       <h2>Contrat signé</h2>
-      <div class="field"><label>Commercial</label><select id="contractCommercial"></select></div>
+      <div class="field"><label>Commercial</label><input id="contractCommercial" readonly></div>
       <div class="field"><label>Commerce / client</label><input id="client" placeholder="Nom du commerce"></div>
       <div class="field"><label>Département</label><select id="contractDept"><option value="59">59 — Nord</option><option value="62">62 — Pas-de-Calais</option></select></div>
       <div class="field"><label>Adresse</label><input id="contractAddress" placeholder="Adresse du commerce"></div>
@@ -221,7 +220,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, setDoc, doc, getDoc, onSnapshot, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 import "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
 
 const firebaseConfig = {
@@ -237,13 +236,12 @@ const appFb = initializeApp(firebaseConfig);
 const auth = getAuth(appFb);
 const db = getFirestore(appFb);
 
-const team = ["Lucas Chenoufi","Thomas Delgado","Paul Struyve","Paul 1","Raphaël Vienne","Jordan Bruni","Soleyka Delhem"];
-const colors = ["#2563eb","#16a34a","#f59e0b","#9333ea","#dc2626","#0891b2","#db2777"];
+let team = [];
+const palette = ["#2563eb","#16a34a","#f59e0b","#9333ea","#dc2626","#0891b2","#db2777","#0f766e","#c2410c","#7c3aed","#be123c","#0369a1"];
+let allProfiles=[];
 
 
 const $ = id => document.getElementById(id);
-team.forEach(name=>{ const o=document.createElement("option"); o.value=name; o.textContent=name; $("signupCommercial").appendChild(o); });
-
 
 /* V17 navigation: we reorganize the existing V15 DOM only after it exists.
    Firebase/Auth code and all data-writing logic remain unchanged. */
@@ -360,7 +358,7 @@ function setupNavigation(){
     </div>
     <div class="menuCard">
       <b>👥 Équipe</b>
-      <div class="small muted" style="margin-top:6px">7 commerciaux · données partagées en temps réel</div>
+      <div class="small muted" style="margin-top:6px">Les commerciaux créent eux-mêmes leur compte. Les noms sont ajoutés automatiquement.</div>
     </div>
     <div class="menuCard">
       <b>📍 Zone</b>
@@ -409,21 +407,19 @@ function setupNavigation(){
 }
 
 setupNavigation();
-team.forEach(name=>{const o=document.createElement("option");o.value=name;o.textContent=name;$("filterCommercial").appendChild(o);});
 let allStreets=[], allContracts=[];
 const legend = $("legend");
-team.forEach((name,i)=>{
-  const item=document.createElement("span");
-  item.style.cssText="display:inline-flex;align-items:center;gap:5px;padding:6px 9px;background:#f3f4f6;border-radius:999px;font-size:13px;font-weight:700";
-  item.innerHTML=`<span style="width:10px;height:10px;border-radius:50%;background:${colors[i]}"></span>${name}`;
-  legend.appendChild(item);
-});
-for (const id of ["streetCommercial","contractCommercial"]) {
-  team.forEach((name,i)=> {
-    const o=document.createElement("option"); o.value=name; o.textContent=name; $(id).appendChild(o);
-  });
+function colorForName(name){ let h=0; for(let i=0;i<name.length;i++) h=(h*31+name.charCodeAt(i))>>>0; return palette[h%palette.length]; }
+function refreshTeamUI(){
+  const names=[...new Set([...allProfiles.map(p=>p.name), ...allStreets.map(s=>s.commercial), ...allContracts.map(c=>c.commercial)].filter(Boolean))].sort((a,b)=>a.localeCompare(b,'fr'));
+  team=names;
+  const filter=$("filterCommercial");
+  if(filter){ const current=filter.value; filter.innerHTML='<option value="">Toute l\'équipe</option>'; names.forEach(name=>{const o=document.createElement('option');o.value=name;o.textContent=name;filter.appendChild(o)}); if(names.includes(current)) filter.value=current; }
+  legend.innerHTML='';
+  names.forEach(name=>{ const item=document.createElement('span'); item.style.cssText='display:inline-flex;align-items:center;gap:5px;padding:6px 9px;background:#f3f4f6;border-radius:999px;font-size:13px;font-weight:700'; item.innerHTML=`<span style="width:10px;height:10px;border-radius:50%;background:${colorForName(name)}"></span>${name}`; legend.appendChild(item); });
+  const currentName=window.currentProfileName||''; $("streetCommercial").value=currentName; $("contractCommercial").value=currentName;
+  drawFilteredMap();
 }
-
 let map, markers=[], streetLines=[];
 let mapInitialized=false;
 function initMap(){
@@ -536,19 +532,19 @@ function refreshDashboard(){
   $("list").innerHTML="";
   if(!streets.length && !contracts.length){$("list").innerHTML='<span class="muted">Aucun résultat pour ces filtres.</span>';return;}
   streets.slice(0,30).forEach(s=>{
-    const c=team.indexOf(s.commercial); const div=document.createElement("div"); div.className="row";
-    div.innerHTML=`<div><b><span class="dot" style="background:${colors[c]||"#111827"}"></span>${s.commercial||""}</b><br><span class="small">🛣️ ${s.address||""} · ${s.visited||0} commerces · ${getDept(s)}</span></div><div class="small">${s.date||""}</div>`;
+    const div=document.createElement("div"); div.className="row";
+    div.innerHTML=`<div><b><span class="dot" style="background:${colorForName(s.commercial||"")}"></span>${s.commercial||""}</b><br><span class="small">🛣️ ${s.address||""} · ${s.visited||0} commerces · ${getDept(s)}</span></div><div class="small">${s.date||""}</div>`;
     $("list").appendChild(div);
   });
   contracts.slice(0,30).forEach(s=>{
-    const c=team.indexOf(s.commercial); const div=document.createElement("div"); div.className="row";
-    div.innerHTML=`<div><b>🟡 ${s.commercial||""}</b><br><span class="small">🤝 ${s.client||"Contrat"} · ${s.address||""} · ${getDept(s)}</span></div><div class="small">${s.date||""}</div>`;
+    const div=document.createElement("div"); div.className="row";
+    div.innerHTML=`<div><b><span class="dot" style="background:${colorForName(s.commercial||"")}"></span>🟡 ${s.commercial||""}</b><br><span class="small">🤝 ${s.client||"Contrat"} · ${s.address||""} · ${getDept(s)}</span></div><div class="small">${s.date||""}</div>`;
     $("list").appendChild(div);
   });
 }
 const streetGeometryCache = new Map();
 async function drawStreetRecord(s){
-  const i=team.indexOf(s.commercial), color=colors[i]||"#111827";
+  const color=colorForName(s.commercial||"");
   const popup=`<b>🛣️ ${s.address}</b><br><b>${s.commercial||""}</b><br>${s.visited||0} commerces visités · ${getDept(s)}<br><span style="color:#64748b">${s.date||""}</span>`;
   let ways = Array.isArray(s.ways) ? s.ways : [];
   if(!ways.length && s.geometry && s.geometry.length>1){
@@ -585,7 +581,7 @@ async function drawFilteredMap(){
 
   contracts.forEach(s=>{
     if(s.lat&&s.lon){
-      const i=team.indexOf(s.commercial), color=colors[i]||"#111827";
+      const color=colorForName(s.commercial||"");
       addMarker(
         s.lat,s.lon,s.commercial,color,
         `🤝 <b>Contrat signé</b><br>${s.commercial||""}<br>${s.client||""}<br>${s.address||""}<br><span style="color:#047857;font-weight:800">${s.energy||""}</span>`,
@@ -599,64 +595,49 @@ async function drawFilteredMap(){
 }
 function subscribe(){
   initMap();
+  onSnapshot(collection(db,"profiles"), snap=>{ allProfiles=snap.docs.map(d=>({id:d.id,...d.data()})); refreshTeamUI(); });
   onSnapshot(query(collection(db,"streets"),orderBy("createdAt","desc"),limit(500)), snap=>{
     allStreets=snap.docs.map(d=>({id:d.id,...d.data()}));
-    drawFilteredMap();
+    refreshTeamUI();
   });
   onSnapshot(query(collection(db,"contracts"),orderBy("createdAt","desc"),limit(500)), snap=>{
     allContracts=snap.docs.map(d=>({id:d.id,...d.data()}));
-    drawFilteredMap();
+    refreshTeamUI();
   });
 }
 ["filterCommercial","filterDept","filterDate"].forEach(id=>$(id).addEventListener("change",drawFilteredMap));
 $("resetFilters").onclick=()=>{
   $("filterCommercial").value=""; $("filterDept").value=""; $("filterDate").value=""; setMapChip("all");
 };
-let emailToCommercial = {
-  "soleyka.delhem@gmail.com":"Soleyka Delhem"
-};
-async function loadMyProfile(){
-  const user=auth.currentUser; if(!user) return;
-  try{
-    const snap=await getDoc(doc(db,"profiles",user.uid));
-    if(snap.exists() && snap.data().commercial){
-      emailToCommercial[user.email.toLowerCase()]=snap.data().commercial;
-      ["streetCommercial","contractCommercial"].forEach(id=>{ if($(id)) $(id).value=snap.data().commercial; });
-    }
-  }catch(e){}
+async function loadProfile(user){
+  const ref=doc(db,"profiles",user.uid); const snap=await getDoc(ref);
+  if(snap.exists()) return snap.data();
+  const known = (user.email||"").toLowerCase()==="soleyka.delhem@gmail.com" ? "Soleyka Delhem" : "";
+  if(known){ await setDoc(ref,{name:known,email:user.email||"",createdAt:Date.now()},{merge:true}); return {name:known,email:user.email||""}; }
+  return null;
 }
 $("myDay").onclick=()=>{
-  const name=emailToCommercial[(auth.currentUser?.email||"").toLowerCase()];
-  if(name) $("filterCommercial").value=name;
+  const name=window.currentProfileName||""; if(name) $("filterCommercial").value=name;
   const now=new Date(); const y=now.getFullYear(), m=String(now.getMonth()+1).padStart(2,"0"), d=String(now.getDate()).padStart(2,"0");
-  $("filterDate").value=`${y}-${m}-${d}`;
-  setMapChip(name ? "all" : "mine");
+  $("filterDate").value=`${y}-${m}-${d}`; setMapChip("all");
 };
 
-$("showSignupBtn").onclick=()=>{ $("loginPanel").classList.add("hidden"); $("signupPanel").classList.remove("hidden"); $("loginError").classList.add("hidden"); };
-$("backLoginBtn").onclick=()=>{ $("signupPanel").classList.add("hidden"); $("loginPanel").classList.remove("hidden"); $("loginError").classList.add("hidden"); };
+$("showSignup").onclick=()=>{ $("signupBox").classList.remove("hidden"); $("loginBtn").classList.add("hidden"); $("showSignup").classList.add("hidden"); $("loginError").classList.add("hidden"); };
+$("backLogin").onclick=()=>{ $("signupBox").classList.add("hidden"); $("loginBtn").classList.remove("hidden"); $("showSignup").classList.remove("hidden"); $("signupError").classList.add("hidden"); };
+$("signupBtn").onclick=async()=>{
+  $("signupError").classList.add("hidden");
+  const name=$("signupName").value.trim(), email=$("signupEmail").value.trim(), pw=$("signupPassword").value, pw2=$("signupPassword2").value;
+  if(!name || !email || !pw) return $("signupError").textContent="Remplis tous les champs.", $("signupError").classList.remove("hidden");
+  if(pw.length<6) return $("signupError").textContent="Le mot de passe doit contenir au moins 6 caractères.", $("signupError").classList.remove("hidden");
+  if(pw!==pw2) return $("signupError").textContent="Les deux mots de passe sont différents.", $("signupError").classList.remove("hidden");
+  try{ const cred=await createUserWithEmailAndPassword(auth,email,pw); await setDoc(doc(db,"profiles",cred.user.uid),{name,email,createdAt:Date.now()}); window.currentProfileName=name; }
+  catch(e){ const msg=e.code==="auth/email-already-in-use"?"Cet e-mail a déjà un compte. Utilise « Se connecter »." : "Création impossible. Vérifie ton e-mail et ton mot de passe."; $("signupError").textContent=msg; $("signupError").classList.remove("hidden"); }
+};
+
 $("loginBtn").onclick=async()=>{
   $("loginError").classList.add("hidden");
   try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value);}
   catch(e){$("loginError").textContent="Connexion impossible : vérifie ton e-mail et ton mot de passe."; $("loginError").classList.remove("hidden");}
-};
-$("signupBtn").onclick=async()=>{
-  $("loginError").classList.add("hidden");
-  const commercial=$("signupCommercial").value;
-  const email=$("signupEmail").value.trim().toLowerCase();
-  const p1=$("signupPassword").value;
-  const p2=$("signupPassword2").value;
-  if(!commercial || !email || !p1){ $("loginError").textContent="Remplis tous les champs."; $("loginError").classList.remove("hidden"); return; }
-  if(p1.length<6){ $("loginError").textContent="Le mot de passe doit contenir au moins 6 caractères."; $("loginError").classList.remove("hidden"); return; }
-  if(p1!==p2){ $("loginError").textContent="Les deux mots de passe ne correspondent pas."; $("loginError").classList.remove("hidden"); return; }
-  try{
-    const cred=await createUserWithEmailAndPassword(auth,email,p1);
-    await setDoc(doc(db,"profiles",cred.user.uid),{commercial,email,createdAt:Date.now()});
-    emailToCommercial[email]=commercial;
-  }catch(e){
-    const msg=e?.code==="auth/email-already-in-use" ? "Cet e-mail a déjà un compte." : "Impossible de créer le compte : vérifie l’e-mail et le mot de passe.";
-    $("loginError").textContent=msg; $("loginError").classList.remove("hidden"); return;
-  }
 };
 $("logout").onclick=()=>signOut(auth);
 $("menuLogout").onclick=()=>signOut(auth);
@@ -682,16 +663,16 @@ $("saveContract").onclick=async()=>{
   $("client").value=""; $("contractAddress").value=""; $("contractForm").classList.add("hidden");
 };
 
-onAuthStateChanged(auth,user=>{
+onAuthStateChanged(auth,async user=>{
   const nav = $("bottomNav");
   if(user){
-    $("login").classList.add("hidden"); $("app").classList.remove("hidden"); $("who").textContent=user.email;
+    const profile=await loadProfile(user); window.currentProfileName=profile?.name||"";
+    $("login").classList.add("hidden"); $("app").classList.remove("hidden"); $("who").textContent=profile?.name ? `${profile.name} · ${user.email}` : user.email;
     nav.style.display="grid";
     if(window.__showAppPage) window.__showAppPage("home");
-    subscribe(); loadMyProfile(); setTimeout(()=>{map && map.invalidateSize(); refreshMapFilter();},300);
+    subscribe(); setTimeout(()=>{map && map.invalidateSize(); refreshMapFilter(); refreshTeamUI();},300);
   }else{
-    $("login").classList.remove("hidden");$("app").classList.add("hidden");
-    nav.style.display="none";
+    window.currentProfileName=""; $("login").classList.remove("hidden");$("app").classList.add("hidden"); nav.style.display="none";
   }
 });
 </script>
