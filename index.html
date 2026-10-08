@@ -4,9 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#111827">
-  <title>Prospection 59-62</title>
-  <link rel="manifest" href="manifest.webmanifest">
+  <title>Prospection 59-62 — V38</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     *{box-sizing:border-box} body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f5f6f8;color:#111827}
     .hidden{display:none!important}.screen{min-height:100vh}.login{display:flex;align-items:center;justify-content:center;padding:24px}
@@ -97,29 +97,186 @@
   border-radius:999px;padding:5px 9px;font-size:11px;font-weight:900
 }
 
+
+/* V20 — tableau de bord commissions + saisie intuitive */
+.resultHero{
+  background:linear-gradient(135deg,#fff1f7,#ffffff);
+  border:1px solid #fbcfe8;border-radius:22px;padding:18px;margin-bottom:12px;
+  box-shadow:0 6px 20px rgba(219,39,119,.08)
+}
+.resultHero .eyebrow{font-size:12px;font-weight:900;color:#9d174d;text-transform:uppercase;letter-spacing:.5px}
+.resultHero .total{font-size:38px;line-height:1;font-weight:950;color:#be185d;margin:6px 0}
+.resultGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:10px 0 14px}
+.resultCard{
+  background:#fff;border:1px solid #edf0f4;border-radius:18px;padding:15px;
+  box-shadow:0 4px 14px rgba(15,23,42,.05)
+}
+.resultCard b{font-size:24px}.resultCard .small{margin-top:3px}
+.energyBreakdown{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.energyBox{background:#f8fafc;border-radius:16px;padding:12px}
+.energyBox strong{display:block;font-size:18px}
+.commissionPreview{
+  background:#fff1f7;border:1px solid #f9a8d4;border-radius:16px;padding:13px;
+  margin:12px 0;color:#9d174d
+}
+.commissionPreview strong{font-size:28px;display:block;color:#be185d}
+.barremeHint{font-size:12px;color:#64748b;margin-top:4px}
+.contractMini{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.contractAmount{font-weight:900;color:#be185d;white-space:nowrap}
+@media(max-width:600px){.resultGrid{grid-template-columns:1fr 1fr}.energyBreakdown{grid-template-columns:1fr 1fr}}
+
+
+/* V21 — ergonomie premium mobile / saisie ultra intuitive */
+body{background:#f4f6fa;color:#142033}
+.top{padding:12px 14px 11px;background:rgba(255,255,255,.97);backdrop-filter:blur(14px);border-bottom:1px solid #e9edf3}
+.toprow>div:first-child b{font-size:18px;letter-spacing:-.3px}
+.content{padding:14px 14px 18px;max-width:760px}
+.card,.stat,.menuCard{border:1px solid #edf0f5;box-shadow:0 6px 22px rgba(15,23,42,.055)}
+.pageHead{margin:5px 2px 13px}
+.pageHead h2{font-size:25px;font-weight:950;letter-spacing:-.5px}
+/* Ajouter */
+#addPage .actions{grid-template-columns:1fr 1fr;gap:10px;margin:0 0 12px}
+#addPage .actions button{min-height:84px;border-radius:18px;font-size:15px;line-height:1.15;box-shadow:0 5px 16px rgba(15,23,42,.08)}
+#addPage .actions button:first-child{background:#e9edf3;color:#182236}
+#addPage .actions button:last-child{background:#ec1970;color:#fff}
+#addPage .card{border-radius:20px;padding:17px}
+#addPage .card h2{font-size:20px;margin-bottom:5px}
+#contractForm .field{margin:11px 0}
+#contractForm input,#contractForm select{min-height:48px;border-radius:14px;border-color:#dfe5ee;background:#fbfcfe}
+#contractForm label{font-size:13px;color:#334155}
+#contractForm #energy{font-weight:800}
+#contractForm #saveContract{min-height:50px;border-radius:16px;background:#ec1970;box-shadow:0 6px 16px rgba(236,25,112,.22);font-size:16px}
+#streetForm #saveStreet{min-height:50px;border-radius:16px;background:#1677e8}
+/* Résultats */
+#resultsPage .pageHead{margin-bottom:10px}
+#resultsPage .resultHero{padding:19px 18px 17px;border-radius:22px;background:linear-gradient(135deg,#fff0f7 0%,#fff 68%);border-color:#f9c7df;box-shadow:0 8px 24px rgba(236,25,112,.08)}
+#resultsPage .resultHero .eyebrow{font-size:11px;letter-spacing:.8px;color:#9d174d}
+#resultsPage .resultHero .total{font-size:42px;letter-spacing:-1.5px;margin:7px 0 4px}
+#resultsPage .resultGrid{gap:10px;margin:10px 0}
+#resultsPage .resultCard{min-height:84px;padding:14px 15px;border-radius:18px}
+#resultsPage .resultCard b{font-size:25px;letter-spacing:-.4px}
+#resultsPage .energyBreakdown{gap:10px;margin-bottom:12px}
+#resultsPage .energyBox{border:1px solid #edf0f5;background:#fff;border-radius:18px;padding:14px;box-shadow:0 4px 14px rgba(15,23,42,.04)}
+#resultsPage .energyBox strong{font-size:20px;color:#172033}
+#resultsPage .energyBox span{display:block;margin-top:3px}
+#resultsPage .card{border-radius:20px;padding:16px}
+#resultsPage #resultPeriod{min-height:46px;border-radius:14px;font-weight:800;background:#fff}
+#resultsPage #resultContractList .row{padding:12px 13px;border:1px solid #edf0f5;box-shadow:none;margin:7px 0;border-radius:15px}
+#resultsPage .contractAmount{background:#fff0f7;border-radius:10px;padding:7px 9px}
+/* Carte */
+#mapPage .pageHead{margin-bottom:11px}
+#mapPage .mapHint{border:1px solid #edf0f5;background:#fff;padding:12px 13px;border-radius:16px}
+#mapPage .mapSummary{gap:9px}
+#mapPage .mapStat{border-radius:17px;padding:12px 8px}
+#mapPage .mapStat strong{font-size:25px}
+#mapPage .mapToolbar{padding-bottom:11px}
+#mapPage .mapChip{padding:10px 14px;border-radius:13px;background:#fff}
+#mapPage .mapChip.active{background:#172033}
+/* Navigation */
+.bottomNav button{font-size:11px;min-height:53px}
+.bottomNav button.active{background:#fff0f7;color:#ec1970}
+.bottomNav button .navIcon{font-size:21px}
+@media(max-width:600px){
+  #addPage .actions{grid-template-columns:1fr 1fr}
+  #addPage .actions button{min-height:92px}
+  .content{padding-left:12px;padding-right:12px}
+}
+@media(max-width:420px){#addPage .actions{grid-template-columns:1fr 1fr}.resultGrid{grid-template-columns:1fr 1fr}}
+
+
+/* V22 — nouvelle page de connexion, mobile-first */
+.loginV22{position:relative;overflow:hidden;min-height:100vh;background:linear-gradient(145deg,#fff 0%,#fff7fb 52%,#f3f6ff 100%);padding:28px 18px 22px;align-items:center}
+.loginGlow{position:absolute;border-radius:999px;filter:blur(2px);pointer-events:none}
+.loginGlow1{width:230px;height:230px;right:-95px;top:-75px;background:rgba(236,25,112,.10)}
+.loginGlow2{width:200px;height:200px;left:-120px;bottom:-80px;background:rgba(37,99,235,.08)}
+.loginWrap{width:100%;max-width:430px;position:relative;z-index:2}
+.loginBrand{display:flex;align-items:center;gap:11px;margin:0 auto 18px;padding:0 4px}
+.brandPin{width:43px;height:43px;border-radius:14px;background:#fff;box-shadow:0 7px 20px rgba(15,23,42,.10);display:flex;align-items:center;justify-content:center;font-size:23px}
+.brandName{font-size:20px;font-weight:950;letter-spacing:-.5px;color:#142033}.brandName span{color:#ec1970}.brandSub{font-size:12px;color:#687386;font-weight:650;margin-top:2px}
+.loginCardV22{background:rgba(255,255,255,.94);border:1px solid rgba(226,232,240,.95);border-radius:28px;padding:25px 21px 20px;box-shadow:0 18px 50px rgba(15,23,42,.11);backdrop-filter:blur(16px)}
+.loginHero{text-align:left;margin-bottom:18px}.loginBadge{display:inline-flex;align-items:center;padding:7px 11px;border-radius:999px;background:#fff0f7;color:#d91367;font-size:11px;font-weight:850;margin-bottom:10px}.loginHero h1{font-size:30px;line-height:1.05;letter-spacing:-.9px;margin:0 0 7px;color:#142033}.loginHero p{font-size:14px;line-height:1.45;color:#667085;margin:0;max-width:330px}
+.fieldV22{margin:13px 0}.fieldV22 label{font-size:12px;color:#39445a;font-weight:850;margin:0 0 7px 2px}.inputWrap{display:flex;align-items:center;gap:9px;border:1.5px solid #e1e6ee;background:#fbfcfe;border-radius:15px;padding:0 13px;transition:.2s}.inputWrap:focus-within{border-color:#ec1970;box-shadow:0 0 0 4px rgba(236,25,112,.08);background:#fff}.inputWrap>span{font-size:16px;opacity:.8}.inputWrap input{border:0!important;outline:0!important;background:transparent!important;box-shadow:none!important;padding:14px 0!important;min-width:0;color:#172033}.inputWrap input::placeholder{color:#a0a8b6}
+.primaryV22{display:flex!important;align-items:center;justify-content:space-between;width:100%;min-height:54px!important;border-radius:16px!important;background:linear-gradient(135deg,#ec1970,#d91464)!important;color:#fff!important;padding:0 18px!important;font-size:16px!important;font-weight:900!important;box-shadow:0 9px 20px rgba(236,25,112,.22);margin-top:16px}.primaryV22 span:last-child{font-size:21px}.signupLinkV22{display:flex!important;align-items:center;justify-content:center;gap:7px;background:transparent!important;color:#d91367!important;border:0!important;box-shadow:none!important;padding:15px 8px 8px!important;font-size:14px!important}.signupLinkV22 span{font-size:19px}
+.loginTrust{margin-top:12px;padding:10px 11px;border-radius:13px;background:#f7f8fb;color:#788397;font-size:11px;line-height:1.35;text-align:center;font-weight:650}.signupV22{margin-top:14px}.signupDivider{display:flex;align-items:center;gap:10px;color:#253149;font-size:17px;font-weight:900;margin:5px 0 4px}.signupDivider:before,.signupDivider:after{content:"";height:1px;background:#e7ebf1;flex:1}.signupIntro{font-size:12px;color:#788397;margin:0 0 14px;text-align:center}.backLoginV22{background:#f0f2f6!important;color:#29344a!important;margin-top:8px!important;font-size:13px!important}.loginFooter{text-align:center;color:#8a93a2;font-size:11px;font-weight:700;margin-top:15px}
+@media(max-width:380px){.loginV22{padding:18px 12px}.loginCardV22{padding:21px 17px 17px}.loginHero h1{font-size:27px}.brandName{font-size:18px}}
+
+#addPage{padding-bottom:180px!important}
+#streetForm,#contractForm{margin-bottom:130px!important;scroll-margin-top:100px}
+
+.rateCard{border:1px solid #e5e7eb;border-radius:16px;overflow:hidden;margin:12px 0}.rateCard h4{padding:14px;margin:0;background:#fdf2f8;color:#9d174d}.rateTable{width:100%;border-collapse:collapse;font-size:14px}.rateTable th,.rateTable td{text-align:left;padding:12px;border-bottom:1px solid #f1f5f9}.rateTable th{font-size:11px;color:#64748b}.rateTable td:last-child{text-align:right;color:#be185d}.recordCard{border:1px solid #e5e7eb;padding:14px;border-radius:16px;margin-top:12px;overflow-wrap:anywhere}.recordActions{display:flex;gap:8px;margin-top:12px}.recordActions button{font-size:13px;min-height:44px}.editDialog{border:0;border-radius:22px;width:calc(100% - 24px);max-width:480px;max-height:85vh;padding:20px;box-shadow:0 20px 80px #0004}.editDialog::backdrop{background:#0f172a99}.editDialog label{display:block;margin:12px 0;font-size:13px;font-weight:700}.editDialog input,.editDialog select{margin-top:6px}.editDialog button{margin-top:8px}.editError{color:#b91c1c;font-size:13px}button:disabled{opacity:.55;cursor:wait}
+
+/* Accueil adapté à la largeur disponible, en portrait et paysage. */
+#homePage .homeScreen{width:100%;max-width:960px;margin:0 auto;padding:clamp(20px,4vw,44px);border-radius:24px}
+#homePage .homeTitle{font-size:clamp(28px,4vw,44px);line-height:1.08;letter-spacing:-.6px}
+#homePage .homeTitle span{font-size:inherit}
+#homePage .homeSubtitle{font-size:clamp(14px,1.7vw,18px);line-height:1.4;margin-top:12px}
+#homePage .deptMap{margin:20px auto 24px}
+#homePage .homeMenu{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;width:100%;max-width:440px;margin:auto}
+#homePage .homeAction{min-width:0;min-height:82px;padding:16px 20px;border-radius:18px!important;font-size:28px;align-items:center}
+#homePage .homeAction span{min-width:0;margin-left:14px}
+#homePage .homeAction b{font-size:18px;line-height:1.2}
+#homePage .homeAction small{font-size:13px;line-height:1.35;margin-top:6px}
+@media(min-width:640px){
+ #homePage .homeMenu{grid-template-columns:repeat(2,minmax(0,1fr));max-width:780px;gap:20px}
+ #homePage .homeAction{min-height:120px;padding:22px;font-size:34px}
+ #homePage .homeAction b{font-size:21px}
+ #homePage .homeAction small{font-size:14px}
+ #homePage .deptMap{margin-top:24px;margin-bottom:32px}
+}
+@media(max-width:360px){
+ #homePage .homeScreen{padding:18px 12px}
+ #homePage .homeAction{padding:14px;min-height:76px;font-size:25px}
+ #homePage .homeAction b{font-size:16px}
+}
+@media(min-width:640px) and (max-height:600px){
+ #homePage .homeScreen{padding:18px 24px}
+ #homePage .deptMap{height:90px;margin:8px auto 12px}
+ #homePage .homeAction{min-height:90px;padding:16px}
+}
+
+.toolsTabs{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:5px;background:#f1f5f9;border-radius:16px;margin-bottom:18px}.toolsTabs button{min-height:46px;margin:0;background:transparent;color:#64748b;font-size:14px;padding:10px 6px}.toolsTabs button[aria-selected="true"]{background:#fff;color:#be185d;box-shadow:0 2px 8px #0001}
 </style>
 </head>
 <body>
-<div id="login" class="screen login">
-  <div class="card">
-    <h1>📍 Prospection 59-62</h1>
-    <p class="muted">Carte collaborative de prospection ENGIE Pro</p>
-    <div id="loginError" class="error hidden"></div>
-    <div class="field"><label>E-mail</label><input id="email" type="email" autocomplete="username" placeholder="Votre e-mail"></div>
-    <div class="field"><label>Mot de passe</label><input id="password" type="password" autocomplete="current-password" placeholder="Votre mot de passe"></div>
-    <button id="loginBtn">Se connecter</button>
-    <button id="showSignup" class="secondary" style="margin-top:10px">Créer mon compte</button>
-    <div id="signupBox" class="hidden" style="margin-top:14px;border-top:1px solid #e5e7eb;padding-top:14px">
-      <h2 style="margin:0 0 6px">Créer mon compte</h2>
-      <p class="small muted">Choisis simplement ton nom, ton e-mail et ton mot de passe. Aucun nom d’équipe n’est pré-enregistré.</p>
-      <div class="field"><label>Nom et prénom</label><input id="signupName" type="text" placeholder="Ex. Julie Martin" autocomplete="name"></div>
-      <div class="field"><label>E-mail</label><input id="signupEmail" type="email" placeholder="Votre e-mail" autocomplete="email"></div>
-      <div class="field"><label>Mot de passe</label><input id="signupPassword" type="password" placeholder="6 caractères minimum" autocomplete="new-password"></div>
-      <div class="field"><label>Confirmer le mot de passe</label><input id="signupPassword2" type="password" placeholder="Confirmer le mot de passe" autocomplete="new-password"></div>
-      <div id="signupError" class="error hidden"></div>
-      <button id="signupBtn">Créer mon compte</button>
-      <button id="backLogin" class="secondary" style="margin-top:8px">Retour à la connexion</button>
+<div id="login" class="screen login loginV22">
+  <div class="loginGlow loginGlow1"></div><div class="loginGlow loginGlow2"></div>
+  <div class="loginWrap">
+    <div class="loginBrand">
+      <div class="brandPin">📍</div>
+      <div><div class="brandName">Prospection <span>59-62</span></div><div class="brandSub">Carte collaborative &amp; suivi commercial</div></div>
     </div>
+
+    <div class="loginCardV22">
+      <div class="loginHero">
+        <div class="loginBadge">⚡ ENGIE Pro</div>
+        <h1 id="loginHeading">Bienvenue 👋</h1>
+        <p id="loginIntro">Connecte-toi pour retrouver ta carte et suivre tes contrats.</p>
+      </div>
+
+      <div id="loginError" class="error hidden"></div>
+
+      <div class="field fieldV22"><label for="email">E-mail</label><div class="inputWrap"><span>✉️</span><input id="email" type="email" autocomplete="username" placeholder="exemple@email.com"></div></div>
+      <div class="field fieldV22"><label for="password">Mot de passe</label><div class="inputWrap"><span>🔒</span><input id="password" type="password" autocomplete="current-password" placeholder="Ton mot de passe"></div></div>
+
+      <button id="loginBtn" class="primaryV22" type="button"><span>Se connecter</span><span>→</span></button>
+      <button id="showSignup" class="signupLinkV22" type="button">Créer mon compte <span>＋</span></button>
+
+      <div class="loginTrust"><span>🔐</span> Tes données de prospection sont synchronisées en temps réel.</div>
+
+      <div id="signupBox" class="hidden signupV22">
+        <div class="signupDivider"><span>Créer mon compte</span></div>
+        <p class="signupIntro">Quelques informations et ton espace est prêt.</p>
+        <div class="field fieldV22"><label for="signupName">Nom et prénom</label><div class="inputWrap"><span>👤</span><input id="signupName" type="text" placeholder="Ex. Julie Martin" autocomplete="name"></div></div>
+        <div class="field fieldV22"><label for="signupEmail">E-mail</label><div class="inputWrap"><span>✉️</span><input id="signupEmail" type="email" placeholder="Votre e-mail" autocomplete="email"></div></div>
+        <div class="field fieldV22"><label for="signupPassword">Mot de passe</label><div class="inputWrap"><span>🔒</span><input id="signupPassword" type="password" placeholder="6 caractères minimum" autocomplete="new-password"></div></div>
+        <div class="field fieldV22"><label for="signupPassword2">Confirmer le mot de passe</label><div class="inputWrap"><span>✓</span><input id="signupPassword2" type="password" placeholder="Confirmer le mot de passe" autocomplete="new-password"></div></div>
+        <div id="signupError" class="error hidden"></div>
+        <button id="signupBtn" class="primaryV22" type="button"><span>Créer mon espace</span><span>→</span></button>
+        <button id="backLogin" class="backLoginV22" type="button">← Retour à la connexion</button>
+      </div>
+    </div>
+
+    <div class="loginFooter">🗺️ 59 &amp; 62 &nbsp;•&nbsp; Simple &nbsp;•&nbsp; Rapide &nbsp;•&nbsp; Collaboratif</div>
   </div>
 </div>
 
@@ -152,7 +309,7 @@
     </div>
 
     <div class="card" style="margin:14px 0">
-      <h2 style="margin-top:0;margin-bottom:10px">📊 Aujourd’hui</h2>
+      <h2 style="margin-top:0;margin-bottom:10px">📊 Résultats des filtres</h2>
       <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:8px">
         <div class="stat" style="padding:10px;text-align:center"><div class="muted small">Commerces</div><b id="visitedCount" style="font-size:22px">0</b></div>
         <div class="stat" style="padding:10px;text-align:center"><div class="muted small">Rues</div><b id="filteredStreetCount" style="font-size:22px">0</b></div>
@@ -173,7 +330,7 @@
       <button id="contractBtn">🤝 J’ai signé un contrat</button>
     </div>
 
-    <div class="card" id="streetForm" class="hidden">
+    <div class="card hidden" id="streetForm">
       <h2>Rue prospectée</h2>
       <div class="field"><label>Commercial</label><input id="streetCommercial" readonly></div>
       <div class="field"><label>Département</label><select id="streetDept"><option value="59">59 — Nord</option><option value="62">62 — Pas-de-Calais</option></select></div>
@@ -183,12 +340,24 @@
     </div>
 
     <div class="card hidden" id="contractForm" style="margin-top:12px">
-      <h2>Contrat signé</h2>
+      <h2>🤝 Contrat signé</h2>
+      <p class="small muted" style="margin-top:-4px">Renseigne l’énergie et la puissance : la rémunération brute est calculée automatiquement.</p>
       <div class="field"><label>Commercial</label><input id="contractCommercial" readonly></div>
-      <div class="field"><label>Commerce / client</label><input id="client" placeholder="Nom du commerce"></div>
+      <div class="field"><label>Commerce / client</label><input id="client" placeholder="Ex. Boucherie Martin"></div>
       <div class="field"><label>Département</label><select id="contractDept"><option value="59">59 — Nord</option><option value="62">62 — Pas-de-Calais</option></select></div>
-      <div class="field"><label>Adresse</label><input id="contractAddress" placeholder="Adresse du commerce"></div>
-      <div class="field"><label>Énergie</label><select id="energy"><option>Électricité</option><option>Gaz</option><option>Électricité + Gaz</option></select></div>
+      <div class="field"><label>Adresse</label><input id="contractAddress" placeholder="Ex. 25 rue Nationale, Lille"></div>
+      <div class="field"><label>Énergie</label><select id="energy"><option value="Électricité">⚡ Électricité</option><option value="Gaz">🔥 Gaz</option></select></div>
+      <div class="field">
+        <label id="powerLabel">Puissance électrique</label>
+        <input id="contractPower" type="number" min="0" step="0.1" placeholder="Ex. 12">
+        <div class="barremeHint" id="powerHint">En kVA — ex. 6, 8, 12, 42…</div>
+        <div id="quickPower" style="display:flex;flex-wrap:wrap;gap:7px;margin-top:8px"></div>
+      </div>
+      <div id="commissionPreview" class="commissionPreview">
+        <span>💰 Rémunération brute estimée</span>
+        <strong id="commissionAmount">—</strong>
+        <div id="commissionLabel" class="barremeHint">Renseigne la puissance pour calculer.</div>
+      </div>
       <button id="saveContract">Enregistrer le contrat</button>
     </div>
 
@@ -220,8 +389,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-import "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
+import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, limit, doc, getDoc, setDoc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDXj5cQLj0LXpgewFN4VlAT8iOOf909whI",
@@ -236,12 +404,116 @@ const appFb = initializeApp(firebaseConfig);
 const auth = getAuth(appFb);
 const db = getFirestore(appFb);
 
+// V25 — le diagnostic de chargement ne bloque plus l’écran de connexion.
+
 let team = [];
 const palette = ["#2563eb","#16a34a","#f59e0b","#9333ea","#dc2626","#0891b2","#db2777","#0f766e","#c2410c","#7c3aed","#be123c","#0369a1"];
 let allProfiles=[];
 
 
 const $ = id => document.getElementById(id);
+
+const loginButton = $("loginBtn");
+loginButton.onclick = async () => {
+  const err = $("loginError");
+  err.classList.add("hidden");
+  const email = $("email").value.trim();
+  const password = $("password").value;
+  if (!email || !password) {
+    err.textContent = "Renseigne ton e-mail et ton mot de passe.";
+    err.classList.remove("hidden");
+    return;
+  }
+  const label = loginButton.querySelector("span");
+  loginButton.disabled = true;
+  loginButton.style.opacity = ".7";
+  if (label) label.textContent = "Connexion…";
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (e) {
+    console.error("Firebase login error", e);
+    err.textContent = "Connexion impossible : " + (e?.code || e?.message || "erreur inconnue");
+    err.classList.remove("hidden");
+  } finally {
+    loginButton.disabled = false;
+    loginButton.style.opacity = "1";
+    if (label) label.textContent = "Se connecter";
+  }
+};
+
+
+// V32 — critical field actions are registered early, just like login.
+// They therefore keep working even if a later map/dashboard component has an error.
+$("streetBtn").onclick=()=>{
+  $("contractForm").classList.add("hidden");
+  $("streetForm").classList.remove("hidden");
+  setTimeout(()=>$("streetForm").scrollIntoView({behavior:"smooth",block:"start"}),80);
+};
+$("contractBtn").onclick=()=>{
+  $("streetForm").classList.add("hidden");
+  $("contractForm").classList.remove("hidden");
+  try{ refreshCommissionPreview(); }catch(_){}
+  setTimeout(()=>$("contractForm").scrollIntoView({behavior:"smooth",block:"start"}),80);
+};
+
+$("saveStreet").onclick=async()=>{
+  const btn=$("saveStreet"),address=$("streetAddress").value.trim();
+  if(!address)return alert("Indique la rue et la ville.");
+  if(!auth.currentUser)return alert("Ta session a expiré. Reconnecte-toi.");
+  const old=btn.textContent;btn.disabled=true;btn.textContent="⏳ Enregistrement…";
+  try{
+    const position=await resolveStreet(address);
+    const ref=await addDoc(collection(db,"streets"),{commercial:$("streetCommercial").value||window.currentProfileName||"",dept:$("streetDept").value,address,visited:Number($("visited").value||0),lat:position.lat,lon:position.lon,geometry:null,ways:encodeWays(position.ways),date:new Date().toLocaleDateString("fr-FR"),createdAt:Date.now(),createdBy:auth.currentUser.uid});
+    alert("✅ Rue enregistrée !");
+    lastStreetPos=[position.lat,position.lon];
+    resetMapFilters();
+    $("streetAddress").value="";$("visited").value=0;$("streetForm").classList.add("hidden");
+    if(window.__showAppPage)window.__showAppPage("map");
+  }catch(e){alert("❌ Enregistrement impossible : "+(e?.code||e?.message||"erreur inconnue"));}
+  finally{btn.disabled=false;btn.textContent=old;}
+};
+
+$("saveContract").onclick=async()=>{
+  const btn=$("saveContract"),client=$("client").value.trim(),address=$("contractAddress").value.trim(),energy=$("energy").value,power=Number($("contractPower").value),commission=getCommission(energy,power);
+  if(!client)return alert("Indique le nom du commerce / client.");
+  if(!address)return alert("Indique l’adresse du commerce.");
+  if(commission.amount==null)return alert("Vérifie la puissance ou la consommation.");
+  if(!auth.currentUser)return alert("Ta session a expiré. Reconnecte-toi.");
+  const old=btn.textContent;btn.disabled=true;btn.textContent="⏳ Enregistrement…";
+  try{
+    const position=await geocode(address);
+    if(!validPosition(position))throw new Error("Adresse introuvable : précise le numéro, la rue et la ville.");
+    const ref=await addDoc(collection(db,"contracts"),{commercial:$("contractCommercial").value||window.currentProfileName||"",dept:$("contractDept").value,client,address,energy,power,powerUnit:energy==="Gaz"?"MWh":"kVA",barreme:commission.label,remunerationBrute:commission.amount,lat:position.lat,lon:position.lon,date:new Date().toLocaleDateString("fr-FR"),createdAt:Date.now(),createdBy:auth.currentUser.uid});
+    alert("✅ Contrat enregistré ! Commission brute : "+commission.amount+" €");
+    resetMapFilters();
+    $("client").value="";$("contractAddress").value="";$("contractPower").value="";$("contractForm").classList.add("hidden");
+    if(window.__showAppPage)window.__showAppPage("map");
+  }catch(e){alert("❌ Enregistrement impossible : "+(e?.code||e?.message||"erreur inconnue"));}
+  finally{btn.disabled=false;btn.textContent=old;}
+};
+
+// V27: Auth is registered before the rest of the interface initializes.
+// This keeps login operational even if a later map/dashboard component has an error.
+onAuthStateChanged(auth, async user => {
+  if (!user) return;
+  try {
+    const profile = await loadProfile(user);
+    window.currentProfileName = profile?.name || "";
+    $("login").classList.add("hidden");
+    $("app").classList.remove("hidden");
+    $("who").textContent = profile?.name ? `${profile.name} · ${user.email}` : user.email;
+    $("bottomNav").style.display = "grid";
+    if (window.__showAppPage) window.__showAppPage("home");
+    subscribe();
+    setTimeout(() => { if (map) map.invalidateSize(); refreshTeamUI(); }, 300);
+  } catch (e) {
+    console.error("Post-login initialization error", e);
+    $("login").classList.add("hidden");
+    $("app").classList.remove("hidden");
+    $("who").textContent = user.email || "";
+    $("bottomNav").style.display = "grid";
+  }
+});
 
 /* V17 navigation: we reorganize the existing V15 DOM only after it exists.
    Firebase/Auth code and all data-writing logic remain unchanged. */
@@ -328,6 +600,7 @@ function setupNavigation(){
     </div>
     <div class="mapHint">💡 Touchez une rue pour voir le commercial, la date et le nombre de commerces visités. Les contrats sont affichés en jaune.</div>`;
   mapPage.appendChild(mapTools);
+  mapPage.appendChild(today);
   mapPage.appendChild(mapWrap);
   mapTools.querySelectorAll("[data-map-filter]").forEach(btn=>{
     btn.addEventListener("click",()=>setMapChip(btn.dataset.mapFilter));
@@ -345,10 +618,34 @@ function setupNavigation(){
   resultsPage.innerHTML = `
     <div class="pageHead">
       <h2>📊 Mes résultats</h2>
+    </div>
+    <div class="resultHero">
+      <div class="eyebrow">Rémunération brute</div>
+      <div class="total" id="resultTotalCommission">0 €</div>
+      <div class="small muted">Total de mes contrats signés</div>
+    </div>
+    <div class="resultGrid">
+      <div class="resultCard"><div class="muted small">🤝 Contrats</div><b id="resultContractCount">0</b></div>
+      <div class="resultCard"><div class="muted small">💶 Moyenne / contrat</div><b id="resultAverageCommission">0 €</b></div>
+    </div>
+    <div class="energyBreakdown">
+      <div class="energyBox"><strong id="resultElecCommission">0 €</strong><span class="small muted">⚡ Électricité</span><div class="small muted" id="resultElecCount">0 contrat</div></div>
+      <div class="energyBox"><strong id="resultGasCommission">0 €</strong><span class="small muted">🔥 Gaz</span><div class="small muted" id="resultGasCount">0 contrat</div></div>
+    </div>
+    <div class="card" style="margin:14px 0">
+      <div class="field" style="margin:0">
+        <label>Période</label>
+        <select id="resultPeriod">
+          <option value="all">Depuis le début</option>
+          <option value="month">Ce mois</option>
+          <option value="today">Aujourd’hui</option>
+        </select>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="margin-top:0">📋 Mes contrats</h3>
+      <div id="resultContractList" class="list"><span class="muted">Aucun contrat pour le moment.</span></div>
     </div>`;
-  resultsPage.appendChild(stats);
-  resultsPage.appendChild(today);
-  resultsPage.appendChild(listCard);
 
   menuPage.innerHTML = `
     <div class="pageHead"><h2>☰ Menu</h2></div>
@@ -368,6 +665,10 @@ function setupNavigation(){
       <button id="menuLogout" class="danger" type="button">Déconnexion</button>
     </div>`;
 
+  const toolsCard=document.createElement("div");
+  toolsCard.className="menuCard";
+  toolsCard.innerHTML='<button id="openTools" class="secondary">🧰 Outils</button><div id="toolsPanel" class="hidden" style="margin-top:16px"><div class="toolsTabs" role="tablist" aria-label="Outils"><button id="tabRates" role="tab" aria-selected="true" aria-controls="ratesPanel">Barème</button><button id="tabRecords" role="tab" aria-selected="false" aria-controls="recordsPanel">Enregistrements</button></div><section id="ratesPanel" role="tabpanel" aria-labelledby="tabRates"><h3>Commissions brutes par contrat</h3><p class="small muted">Barème repris de l’application. Ces montants sont des commissions, pas des prix de vente d’énergie.</p><div id="commissionTables"></div></section><section id="recordsPanel" class="hidden" role="tabpanel" aria-labelledby="tabRecords"><h3>Mes enregistrements</h3><div style="display:flex;gap:8px"><button id="manageStreets" class="secondary">Rues</button><button id="manageContracts" class="secondary">Contrats</button></div><div id="managedRecords"></div></section></div>';
+  menuPage.insertBefore(toolsCard,menuPage.lastElementChild);
   // Clear main and insert the five pages.
   main.innerHTML = "";
   [homePage,mapPage,addPage,resultsPage,menuPage].forEach(p=>main.appendChild(p));
@@ -381,7 +682,7 @@ function setupNavigation(){
     Object.entries(pages).forEach(([key,el])=>el.classList.toggle("active", key===name));
     navButtons.forEach(btn=>btn.classList.toggle("active", btn.dataset.page===name));
     if(name==="map"){
-      setTimeout(()=>{ if(map) map.invalidateSize(); },80);
+      setTimeout(()=>{ if(map){ map.invalidateSize(); drawFilteredMap(); } },120);
     }
     if(name==="menu"){
       $("menuWho").textContent = auth.currentUser?.email || "";
@@ -390,6 +691,7 @@ function setupNavigation(){
   }
 
   navButtons.forEach(btn=>btn.addEventListener("click",()=>showPage(btn.dataset.page)));
+  $("resultPeriod").addEventListener("change", refreshDashboard);
   document.querySelectorAll("[data-go-page]").forEach(btn=>{
     btn.addEventListener("click",()=>{
       const page=btn.dataset.goPage;
@@ -408,6 +710,7 @@ function setupNavigation(){
 
 setupNavigation();
 let allStreets=[], allContracts=[];
+refreshCommissionPreview();
 const legend = $("legend");
 function colorForName(name){
   const n=(name||"").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
@@ -469,7 +772,7 @@ async function getStreetGeometry(lat,lon,address){
     const target=norm(raw);
     els=nearby.filter(e=>{
       const n=norm(e.tags?.name);
-      return n===target || n.includes(target) || target.includes(n);
+      return n && target && (n===target || n.includes(target) || target.includes(n));
     });
   }
   return els.map(e=>e.geometry.map(p=>[p.lat,p.lon]));
@@ -502,6 +805,7 @@ async function geocode(address, wantStreet=false){
     q:address
   });
   const r=await fetch("https://nominatim.openstreetmap.org/search?"+params.toString());
+  if(!r.ok)throw new Error("Service de localisation indisponible ("+r.status+"). Réessaie dans un instant.");
   const d=await r.json();
   if(!d[0]) return null;
   const x=d[0];
@@ -529,30 +833,89 @@ function matches(item){
   return true;
 }
 function refreshDashboard(){
-  const streets=allStreets.filter(matches), contracts=allContracts.filter(matches);
-  $("streetCount").textContent=allStreets.length;
-  $("contractCount").textContent=allContracts.length;
-  $("filteredStreetCount").textContent=streets.length;
-  $("filteredContractCount").textContent=contracts.length;
-  $("visitedCount").textContent=streets.reduce((n,s)=>n+Number(s.visited||0),0);
-  $("list").innerHTML="";
-  if(!streets.length && !contracts.length){$("list").innerHTML='<span class="muted">Aucun résultat pour ces filtres.</span>';return;}
-  streets.slice(0,30).forEach(s=>{
-    const div=document.createElement("div"); div.className="row";
-    div.innerHTML=`<div><b><span class="dot" style="background:${colorForName(s.commercial||"")}"></span>${s.commercial||""}</b><br><span class="small">🛣️ ${s.address||""} · ${s.visited||0} commerces · ${getDept(s)}</span></div><div class="small">${s.date||""}</div>`;
-    $("list").appendChild(div);
-  });
-  contracts.slice(0,30).forEach(s=>{
-    const div=document.createElement("div"); div.className="row";
-    div.innerHTML=`<div><b><span class="dot" style="background:${colorForName(s.commercial||"")}"></span>🟡 ${s.commercial||""}</b><br><span class="small">🤝 ${s.client||"Contrat"} · ${s.address||""} · ${getDept(s)}</span></div><div class="small">${s.date||""}</div>`;
-    $("list").appendChild(div);
-  });
+  const streets=allStreets.filter(matches);
+  const contracts=allContracts.filter(matches);
+  if($("filteredStreetCount"))$("filteredStreetCount").textContent=streets.length;
+  if($("filteredContractCount"))$("filteredContractCount").textContent=contracts.length;
+  if($("visitedCount"))$("visitedCount").textContent=streets.reduce((n,r)=>n+Number(r.visited||0),0);
+
+  const uid=auth.currentUser?.uid||"";
+  let mine=allContracts.filter(c=>c.createdBy===uid);
+  const period=$("resultPeriod")?.value||"all";
+  const now=new Date();
+  const startToday=new Date(now.getFullYear(),now.getMonth(),now.getDate()).getTime();
+  const startMonth=new Date(now.getFullYear(),now.getMonth(),1).getTime();
+  if(period==="today") mine=mine.filter(c=>Number(c.createdAt||0)>=startToday);
+  if(period==="month") mine=mine.filter(c=>Number(c.createdAt||0)>=startMonth);
+
+  const total=mine.reduce((n,c)=>n+Number(c.remunerationBrute||0),0);
+  const elec=mine.filter(c=>c.energy==="Électricité");
+  const gas=mine.filter(c=>c.energy==="Gaz");
+  const elecTotal=elec.reduce((n,c)=>n+Number(c.remunerationBrute||0),0);
+  const gasTotal=gas.reduce((n,c)=>n+Number(c.remunerationBrute||0),0);
+
+  const money=n=>`${Number(n||0).toLocaleString("fr-FR")} €`;
+  $("resultTotalCommission").textContent=money(total);
+  $("resultContractCount").textContent=mine.length;
+  $("resultAverageCommission").textContent=money(mine.length?total/mine.length:0);
+  $("resultElecCommission").textContent=money(elecTotal);
+  $("resultGasCommission").textContent=money(gasTotal);
+  $("resultElecCount").textContent=`${elec.length} contrat${elec.length>1?"s":""}`;
+  $("resultGasCount").textContent=`${gas.length} contrat${gas.length>1?"s":""}`;
+
+  const list=$("resultContractList");
+  list.innerHTML="";
+  if(!mine.length){
+    list.innerHTML='<span class="muted">Aucun contrat sur cette période.</span>';
+  }else{
+    mine.sort((a,b)=>Number(b.createdAt||0)-Number(a.createdAt||0)).slice(0,50).forEach(c=>{
+      const div=document.createElement("div");
+      div.className="row";
+      const unit=c.powerUnit||"";
+      const power=c.power!=null ? `${c.power} ${unit}` : "";
+      div.innerHTML=`<div><b>${c.energy==="Gaz"?"🔥":"⚡"} ${c.client||"Contrat signé"}</b><br><span class="small">${power}${power?" · ":""}${c.barreme||""} · ${c.date||""}</span></div><div class="contractAmount">${money(c.remunerationBrute)}</div>`;
+      list.appendChild(div);
+    });
+  }
 }
 const streetGeometryCache = new Map();
+function validPosition(p){return p && p.lat!=null && p.lon!=null && Number.isFinite(Number(p.lat)) && Number.isFinite(Number(p.lon));}
+function encodeWays(ways){return ways.map(line=>({points:line.map(p=>({lat:Number(p[0]),lon:Number(p[1])}))}));}
+function decodeWays(ways){return (Array.isArray(ways)?ways:[]).map(line=>Array.isArray(line)?line:(line.points||[]).map(p=>[p.lat,p.lon])).filter(line=>line.length>1);}
+async function resolveStreet(address){
+  const p=await geocode(address,true);
+  if(!validPosition(p))throw new Error("Rue introuvable : précise la rue et la ville.");
+  let ways=p.geometry?[p.geometry.map(c=>[c[1],c[0]])]:await getNominatimStreetGeometry(address);
+  if(!ways.length)ways=await getStreetGeometry(p.lat,p.lon,address);
+  if(!ways.length)throw new Error("Tracé de rue indisponible. Rien n’a été enregistré. Vérifie l’adresse ou réessaie dans un instant.");
+  return {...p,ways};
+}
+function resetMapFilters(){
+  ["filterCommercial","filterDept","filterDate"].forEach(id=>$(id).value="");
+  setMapChip("all");
+}
+let drawing=false, redrawPending=false;
+async function drawFilteredMap(){
+  if(drawing){redrawPending=true;return;}
+  drawing=true;
+  try{do{redrawPending=false;await drawMapOnce();}while(redrawPending);}
+  catch(e){console.error(e);alert("Carte non actualisée : "+e.message);}
+  finally{drawing=false;}
+}
 async function drawStreetRecord(s){
   const color=colorForName(s.commercial||"");
+  // V35: récupère aussi les anciennes rues enregistrées sans coordonnées.
+  if(!validPosition(s) && s.address){
+    try{
+      const p=await geocode(s.address,true);
+      if(p){
+        s.lat=Number(p.lat); s.lon=Number(p.lon); s.geometry=p.geometry||null;
+
+      }
+    }catch(e){ console.warn("Récupération rue",e); }
+  }
   const popup=`<b>🛣️ ${s.address}</b><br><b>${s.commercial||""}</b><br>${s.visited||0} commerces visités · ${getDept(s)}<br><span style="color:#64748b">${s.date||""}</span>`;
-  let ways = Array.isArray(s.ways) ? s.ways : [];
+  let ways = decodeWays(s.ways);
   if(!ways.length && s.geometry && s.geometry.length>1){
     ways=[s.geometry.map(p=>[p[1],p[0]])];
   }
@@ -561,8 +924,8 @@ async function drawStreetRecord(s){
     if(streetGeometryCache.has(key)) ways=streetGeometryCache.get(key);
     else {
       ways=await getNominatimStreetGeometry(s.address);
-      if(!ways.length && s.lat&&s.lon) ways=await getStreetGeometry(s.lat,s.lon,s.address);
-      streetGeometryCache.set(key,ways);
+      if(!ways.length && validPosition(s)) ways=await getStreetGeometry(s.lat,s.lon,s.address);
+      if(ways.length)streetGeometryCache.set(key,ways);
     }
   }
   if(ways.length){
@@ -570,11 +933,11 @@ async function drawStreetRecord(s){
       const line=L.polyline(coords,{color,weight:11,opacity:.88,lineCap:"round",lineJoin:"round"}).addTo(map).bindPopup(popup);
       streetLines.push(line);
     });
-  }else if(s.lat&&s.lon){
+  }else if(validPosition(s)){
     addMarker(s.lat,s.lon,s.commercial,color,popup);
   }
 }
-async function drawFilteredMap(){
+async function drawMapOnce(){
   if(!map) return;
   markers.forEach(m=>map.removeLayer(m)); markers=[];
   streetLines.forEach(l=>map.removeLayer(l)); streetLines=[];
@@ -583,10 +946,20 @@ async function drawFilteredMap(){
   window.__streetsCache=streets;
   window.__contractsCache=contracts;
 
-  await Promise.all(streets.map(drawStreetRecord));
+  for(const street of streets)await drawStreetRecord(street);
 
-  contracts.forEach(s=>{
-    if(s.lat&&s.lon){
+  for(const s of contracts){
+    // V35: récupère aussi les anciens contrats enregistrés sans coordonnées.
+    if(!validPosition(s) && s.address){
+      try{
+        const p=await geocode(s.address);
+        if(p){
+          s.lat=Number(p.lat); s.lon=Number(p.lon);
+
+        }
+      }catch(e){ console.warn("Récupération contrat",e); }
+    }
+    if(validPosition(s)){
       const color=colorForName(s.commercial||"");
       addMarker(
         s.lat,s.lon,s.commercial,color,
@@ -594,22 +967,37 @@ async function drawFilteredMap(){
         true
       );
     }
-  });
+  }
+
+  // V35: cadre automatiquement la carte sur les éléments réellement affichés.
+  const visible=[...streetLines,...markers];
+  if(visible.length){
+    try{
+      const group=L.featureGroup(visible);
+      const bounds=group.getBounds();
+      if(bounds.isValid()) map.fitBounds(bounds.pad(.15),{maxZoom:16});
+    }catch(e){ console.warn("Cadrage carte",e); }
+  }
 
   updateMapSummary(streets,contracts);
   refreshDashboard();
+  renderManagedRecords();
 }
+let subscriptions=[];
 function subscribe(){
+  subscriptions.forEach(stop=>stop());
+  subscriptions=[];
+  const syncError=e=>alert("Synchronisation impossible : "+(e.code||e.message));
   initMap();
-  onSnapshot(collection(db,"profiles"), snap=>{ allProfiles=snap.docs.map(d=>({id:d.id,...d.data()})); refreshTeamUI(); });
-  onSnapshot(query(collection(db,"streets"),orderBy("createdAt","desc"),limit(500)), snap=>{
+  subscriptions.push(onSnapshot(collection(db,"profiles"), snap=>{ allProfiles=snap.docs.map(d=>({id:d.id,...d.data()})); refreshTeamUI(); },syncError));
+  subscriptions.push(onSnapshot(query(collection(db,"streets"),orderBy("createdAt","desc"),limit(500)), snap=>{
     allStreets=snap.docs.map(d=>({id:d.id,...d.data()}));
     refreshTeamUI();
-  });
-  onSnapshot(query(collection(db,"contracts"),orderBy("createdAt","desc"),limit(500)), snap=>{
+  },syncError));
+  subscriptions.push(onSnapshot(query(collection(db,"contracts"),orderBy("createdAt","desc"),limit(500)), snap=>{
     allContracts=snap.docs.map(d=>({id:d.id,...d.data()}));
     refreshTeamUI();
-  });
+  },syncError));
 }
 ["filterCommercial","filterDept","filterDate"].forEach(id=>$(id).addEventListener("change",drawFilteredMap));
 $("resetFilters").onclick=()=>{
@@ -640,47 +1028,116 @@ $("signupBtn").onclick=async()=>{
   catch(e){ const msg=e.code==="auth/email-already-in-use"?"Cet e-mail a déjà un compte. Utilise « Se connecter »." : "Création impossible. Vérifie ton e-mail et ton mot de passe."; $("signupError").textContent=msg; $("signupError").classList.remove("hidden"); }
 };
 
-$("loginBtn").onclick=async()=>{
-  $("loginError").classList.add("hidden");
-  try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value);}
-  catch(e){$("loginError").textContent="Connexion impossible : vérifie ton e-mail et ton mot de passe."; $("loginError").classList.remove("hidden");}
-};
 $("logout").onclick=()=>signOut(auth);
 $("menuLogout").onclick=()=>signOut(auth);
-$("streetBtn").onclick=()=>{$("streetForm").classList.toggle("hidden");$("contractForm").classList.add("hidden"); if(window.__showAppPage) window.__showAppPage("add")};
-$("contractBtn").onclick=()=>{$("contractForm").classList.toggle("hidden");$("streetForm").classList.add("hidden"); if(window.__showAppPage) window.__showAppPage("add")};
 
-$("saveStreet").onclick=async()=>{
-  const address=$("streetAddress").value.trim(); if(!address) return alert("Indique l’adresse ou la rue.");
-  const pos=await geocode(address,true); if(!pos) return alert("Rue introuvable. Essaie avec le nom de la rue + la ville.");
-  let ways=await getNominatimStreetGeometry(address);
-  if(!ways.length) ways=await getStreetGeometry(pos.lat,pos.lon,address);
-  if(!ways.length && !pos.geometry) return alert("La rue a été trouvée, mais son tracé n’a pas été récupéré. Essaie avec « Rue Nationale, Lille ».");
-  await addDoc(collection(db,"streets"),{commercial:$("streetCommercial").value,dept:$("streetDept").value,address,visited:Number($("visited").value||0),lat:pos.lat,lon:pos.lon,geometry:pos.geometry||null,ways,date:new Date().toLocaleDateString("fr-FR"),createdAt:Date.now(),createdBy:auth.currentUser.uid});
-  lastStreetPos=[pos.lat,pos.lon];
-  map.setView([pos.lat,pos.lon],16,{animate:true});
-  setTimeout(()=>map.invalidateSize(),250);
-  $("streetAddress").value=""; $("visited").value=0; $("streetForm").classList.add("hidden");
-};
-$("saveContract").onclick=async()=>{
-  const address=$("contractAddress").value.trim(); if(!address) return alert("Indique l’adresse du commerce.");
-  const pos=await geocode(address); if(!pos) return alert("Adresse introuvable. Essaie avec ville + rue.");
-  await addDoc(collection(db,"contracts"),{commercial:$("contractCommercial").value,dept:$("contractDept").value,client:$("client").value.trim(),address,energy:$("energy").value,lat:pos.lat,lon:pos.lon,date:new Date().toLocaleDateString("fr-FR"),createdAt:Date.now(),createdBy:auth.currentUser.uid});
-  $("client").value=""; $("contractAddress").value=""; $("contractForm").classList.add("hidden");
-};
 
-onAuthStateChanged(auth,async user=>{
-  const nav = $("bottomNav");
-  if(user){
-    const profile=await loadProfile(user); window.currentProfileName=profile?.name||"";
-    $("login").classList.add("hidden"); $("app").classList.remove("hidden"); $("who").textContent=profile?.name ? `${profile.name} · ${user.email}` : user.email;
-    nav.style.display="grid";
-    if(window.__showAppPage) window.__showAppPage("home");
-    subscribe(); setTimeout(()=>{map && map.invalidateSize(); refreshMapFilter(); refreshTeamUI();},300);
-  }else{
-    window.currentProfileName=""; $("login").classList.remove("hidden");$("app").classList.add("hidden"); nav.style.display="none";
+
+function getCommission(energy,value){
+  const v=Number(value);
+  if(!Number.isFinite(v) || v<=0) return {amount:null,label:"Renseigne une valeur."};
+  if(energy==="Électricité"){
+    if(v===6) return {amount:75,label:"6 kVA"};
+    if(v>=7 && v<=9) return {amount:85,label:"7–9 kVA"};
+    if(v>=10 && v<=15) return {amount:100,label:"10–15 kVA"};
+    if(v>=16 && v<=24) return {amount:115,label:"16–24 kVA"};
+    if(v>=25 && v<=30) return {amount:130,label:"25–30 kVA"};
+    if(v>=31 && v<=36) return {amount:150,label:"31–36 kVA"};
+    if(v>=37 && v<=54) return {amount:400,label:"37–54 kVA"};
+    if(v>=55 && v<=260) return {amount:450,label:"55–260 kVA"};
   }
-});
+  if(energy==="Gaz"){
+    if(v>=6 && v<50) return {amount:90,label:"6–49,9 MWh"};
+    if(v>=50) return {amount:110,label:"50 MWh et +"};
+  }
+  return {amount:null,label:"Puissance/consommation hors barème."};
+}
+function refreshCommissionPreview(){
+  const energy=$("energy").value;
+  const value=$("contractPower").value;
+  const result=getCommission(energy,value);
+  $("powerLabel").textContent=energy==="Gaz"?"Consommation gaz":"Puissance électrique";
+  $("powerHint").textContent=energy==="Gaz"?"En MWh — ex. 12, 35 ou 60":"En kVA — ex. 6, 8, 12, 42";
+  $("commissionAmount").textContent=result.amount==null?"—":`${result.amount} €`;
+  $("commissionLabel").textContent=result.label;
+}
+function renderQuickPower(){
+  const box=$("quickPower"); if(!box) return;
+  const energy=$("energy").value;
+  const vals=energy==="Gaz"?["10","30","49.9","50","100"]:["6","9","12","18","24","30","36","42","60"];
+  box.innerHTML=vals.map(v=>`<button type="button" data-qpower="${v}" style="width:auto;padding:7px 10px;border-radius:999px;background:#f8fafc;color:#334155;border:1px solid #e2e8f0;font-size:12px;font-weight:800">${v}${energy==="Gaz"?" MWh":" kVA"}</button>`).join("");
+  box.querySelectorAll("[data-qpower]").forEach(b=>b.onclick=()=>{ $("contractPower").value=b.dataset.qpower; refreshCommissionPreview(); });
+}
+$("energy").addEventListener("change",()=>{renderQuickPower();refreshCommissionPreview();});
+$("contractPower").addEventListener("input",refreshCommissionPreview);
+renderQuickPower();
+
+
+
+
+function showToolsTab(name){
+ const rates=name==="rates";
+ $("ratesPanel").classList.toggle("hidden",!rates);
+ $("recordsPanel").classList.toggle("hidden",rates);
+ $("tabRates").setAttribute("aria-selected",String(rates));
+ $("tabRecords").setAttribute("aria-selected",String(!rates));
+ if(!rates)renderManagedRecords();
+}
+$("tabRates").onclick=()=>showToolsTab("rates");
+$("tabRecords").onclick=()=>showToolsTab("records");
+[$("tabRates"),$("tabRecords")].forEach(btn=>btn.onkeydown=e=>{if(e.key==="ArrowLeft"||e.key==="ArrowRight"){e.preventDefault();const next=btn.id==="tabRates"?"records":"rates";showToolsTab(next);$(next==="rates"?"tabRates":"tabRecords").focus();}});
+let managedType="streets";
+const esc=value=>String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+$("openTools").onclick=()=>{$("toolsPanel").classList.toggle("hidden");renderManagedRecords();};
+$("manageStreets").onclick=()=>{managedType="streets";renderManagedRecords();};
+$("manageContracts").onclick=()=>{managedType="contracts";renderManagedRecords();};
+const bands=[
+ ["Électricité",[[6,"6 kVA"],[9,"7–9 kVA"],[12,"10–15 kVA"],[18,"16–24 kVA"],[30,"25–30 kVA"],[36,"31–36 kVA"],[42,"37–54 kVA"],[60,"55–260 kVA"]]],
+ ["Gaz",[[10,"6–49,9 MWh"],[50,"50 MWh et plus"]]]
+];
+$("commissionTables").innerHTML=bands.map(([energy,rows])=>`<div class="rateCard"><h4>${energy==="Gaz"?"🔥":"⚡"} ${energy}</h4><table class="rateTable"><thead><tr><th>${energy==="Gaz"?"Consommation":"Puissance"}</th><th>Commission brute</th></tr></thead><tbody>${rows.map(([value,label])=>`<tr><td>${label}</td><td><strong>${getCommission(energy,value).amount} €</strong></td></tr>`).join("")}</tbody></table></div>`).join("");
+function renderManagedRecords(){
+ const box=$("managedRecords");if(!box)return;
+ const uid=auth.currentUser?.uid;
+ const records=(managedType==="streets"?allStreets:allContracts).filter(r=>uid&&r.createdBy===uid);
+ $("manageStreets").style.background=managedType==="streets"?"#fce7f3":"#e5e7eb";
+ $("manageContracts").style.background=managedType==="contracts"?"#fce7f3":"#e5e7eb";
+ box.innerHTML=records.length?records.map(r=>`<article class="recordCard"><b>${esc(r.client||r.address)}</b>${r.client?`<div>${esc(r.address)}</div>`:""}<div class="small muted">${esc(r.date)} · ${managedType==="streets"?`${Number(r.visited||0)} passages`:`${esc(r.energy)} · ${Number(r.remunerationBrute||0)} € bruts`}</div><div class="recordActions"><button data-edit="${esc(r.id)}" class="secondary">Modifier</button><button data-delete="${esc(r.id)}" class="danger">Supprimer</button></div></article>`).join(""):'<p class="muted">Aucun enregistrement dans cette rubrique.</p>';
+ box.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>editRecord(b.dataset.edit));
+ box.querySelectorAll('[data-delete]').forEach(b=>b.onclick=()=>removeRecord(b.dataset.delete));
+}
+function ownedRecord(id){return (managedType==="streets"?allStreets:allContracts).find(r=>r.id===id&&r.createdBy===auth.currentUser?.uid);}
+async function removeRecord(id){
+ const r=ownedRecord(id);if(!r)return;
+ if(!confirm(`Supprimer définitivement ${r.client||r.address} ?`))return;
+ try{await deleteDoc(doc(db,managedType,id));}catch(e){alert("Suppression impossible : "+(e.code||e.message));}
+}
+function editRecord(id){
+ const r=ownedRecord(id);if(!r)return;const type=managedType;
+ const dialog=document.createElement('dialog');dialog.className='editDialog';
+ dialog.innerHTML=`<form><h2>Modifier ${type==="streets"?"la rue":"le contrat"}</h2><label>Adresse complète<input name="address" required value="${esc(r.address)}"></label>${type==="streets"?`<label>Commerces visités<input name="visited" type="number" min="0" step="1" required value="${Number(r.visited||0)}"></label>`:`<label>Client<input name="client" required value="${esc(r.client)}"></label><label>Énergie<select name="energy"><option ${r.energy==="Électricité"?"selected":""}>Électricité</option><option ${r.energy==="Gaz"?"selected":""}>Gaz</option></select></label><label>Puissance (kVA) ou consommation (MWh)<input name="power" type="number" step="any" min="0" required value="${Number(r.power||0)}"></label>`}<label>Département<select name="dept"><option value="59" ${getDept(r)==="59"?"selected":""}>Nord (59)</option><option value="62" ${getDept(r)==="62"?"selected":""}>Pas-de-Calais (62)</option></select></label><p class="editError" role="alert"></p><button type="submit">Enregistrer les modifications</button><button type="button" class="secondary" data-cancel>Annuler</button></form>`;
+ document.body.appendChild(dialog);dialog.showModal();dialog.querySelector('[data-cancel]').onclick=()=>dialog.close();dialog.addEventListener('close',()=>dialog.remove());
+ dialog.querySelector('form').onsubmit=async e=>{
+  e.preventDefault();const form=e.target,btn=form.querySelector('[type="submit"]');btn.disabled=true;
+  try{
+   if(auth.currentUser?.uid!==r.createdBy)throw new Error("Session expirée.");
+   const data=new FormData(form),address=String(data.get('address')).trim();if(!address)throw new Error("Adresse obligatoire.");
+   let changes={address,dept:data.get('dept'),updatedAt:Date.now()};
+   if(type==="streets"){
+    const visited=Number(data.get('visited'));if(!Number.isInteger(visited)||visited<0)throw new Error("Nombre de passages invalide.");changes.visited=visited;
+    if(address!==r.address){const p=await resolveStreet(address);Object.assign(changes,{lat:p.lat,lon:p.lon,geometry:null,ways:encodeWays(p.ways)});}
+   }else{
+    const energy=data.get('energy'),power=Number(data.get('power')),commission=getCommission(energy,power),client=String(data.get('client')).trim();
+    if(!client||commission.amount==null)throw new Error("Vérifie le client et la puissance/consommation.");
+    Object.assign(changes,{client,energy,power,powerUnit:energy==="Gaz"?"MWh":"kVA",barreme:commission.label,remunerationBrute:commission.amount});
+    if(address!==r.address){const p=await geocode(address);if(!validPosition(p))throw new Error("Adresse introuvable.");Object.assign(changes,{lat:p.lat,lon:p.lon});}
+   }
+   await updateDoc(doc(db,type,id),changes);dialog.close();
+  }catch(e){dialog.querySelector('.editError').textContent="Modification impossible : "+(e.code||e.message);}finally{btn.disabled=false;}
+ };
+}
+
 </script>
 </body>
 </html>
+
